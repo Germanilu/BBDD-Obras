@@ -4,8 +4,12 @@ require('dotenv').config();
 //Conect to database.js
 const db = require('./config/database')
 
+const createRoles = require('./libs/initialSetup')
 
 const app = express()
+//Creating roles when starting the app
+createRoles();
+
 //Check the entry request & create body data
 app.use(express.json())  
 

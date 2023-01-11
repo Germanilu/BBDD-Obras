@@ -35,11 +35,12 @@ const Project_ManagerSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
     },
-    role: {
-        type: String,
-        enum: ['client','project_manager','worker','super_admin'],
-        default: 'project_manager'
-    }
+    role:[
+        {
+        ref: "Role",
+        type: mongoose.Schema.Types.ObjectId
+        },
+    ],
 },
     {
         timestamps: true
