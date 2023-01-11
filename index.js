@@ -4,10 +4,16 @@ require('dotenv').config();
 //Conect to database.js
 const db = require('./config/database')
 
-const app = express()
 
+const app = express()
 //Check the entry request & create body data
 app.use(express.json())  
+
+//Connect Routes
+const authRoutes = require('./routes/auth.routes');
+//Routes
+app.use('/api',authRoutes)
+
 
 
 //Cors
@@ -22,7 +28,6 @@ app.use(cors(corsOptions));
 const port = process.env.PORT || 4000;
 
 
-
 //Welcome Rute
 app.get('/' , (req,res) => {   
     return res.send('BBD Obras ')
@@ -32,7 +37,6 @@ app.get('/' , (req,res) => {
 app.get('*', (req,res) => {
     return res.status(404).send('404 Route not found')
 })
-
 
 
 db().then(() => {
