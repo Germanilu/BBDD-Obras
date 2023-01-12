@@ -31,11 +31,12 @@ const ClientSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
     },
-    role: {
-        type: String,
-        enum: ['client','project_manager','worker','super_admin'],
-        default: 'client'
-    }
+    role:[
+        {
+        ref: "Role",
+        type: mongoose.Schema.Types.ObjectId
+        },
+    ],
 },
     {
         timestamps: true
