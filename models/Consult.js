@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const moment = require('moment')
-moment.locale("it")
+moment.locale("es")
 
 const consultSchema = new mongoose.Schema({
-    userId: {
+    clientId: {
         type: String,
         require: true
     },
-    user2Id:{
+    projectManagerId:{
         type: String,
         require: true
     },
