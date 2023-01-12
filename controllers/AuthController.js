@@ -39,12 +39,14 @@ authController.register = async ( req, res) => {
             address,
             businessName,
             email,
-            password: encryptedPassword
+            password: encryptedPassword,
+            role: "project_manager"
         }
         
-        //Connecting projectmanager role to roleId in DB
-        const foundRoles = await Role.find({name: {$in: role}})
-        newProjectManager.roles = foundRoles.map(role=> role._id)
+        //Checking if role send in frontend exist in BBDD
+        const foundRoles = await Role.find({name: {$in: newProjectManager.role}})
+        //Mapping the object role and assign the id of the role to the object newProjectManager
+        newProjectManager.role = foundRoles.map(role=> role._id)
 
 
         //Creating new project manager
