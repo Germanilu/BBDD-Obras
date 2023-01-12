@@ -135,8 +135,6 @@ authController.registerClient = async ( req, res) => {
 }
 
 
-
-
 //Login
 authController.login = async(req,res) => {
     try {
@@ -182,7 +180,7 @@ authController.login = async(req,res) => {
             user_email: userConnecting.email,
             user_address: userConnecting.address,
             user_mobile: userConnecting.mobile,
-            user_role: userConnecting.role
+            user_role: userConnecting.role[0]
         }, process.env.JWT_SECRET, { expiresIn: '5h'})
 
         return res.status(200).json({
