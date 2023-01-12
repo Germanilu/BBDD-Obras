@@ -200,4 +200,33 @@ authController.login = async(req,res) => {
 }
 
 
+//Check Profile User
+
+authController.profile = async (req, res) => {
+    try {
+        const userId = req.user_id;
+        const userRole = req.user_role;
+        let user;
+        //Checking if Project Manager or Client and return
+        if(userRole === "63bed8e7c36f163968800d40"){
+            user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
+        }else if( userRole === "63bed8e7c36f163968800d3f" ){
+            user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "User profile",
+            data: user
+        }) 
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'User profile failed',
+        })
+    }
+}
+
+
 module.exports = authController
