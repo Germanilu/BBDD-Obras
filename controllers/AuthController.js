@@ -201,7 +201,6 @@ authController.login = async(req,res) => {
 
 
 //Check Profile User
-
 authController.profile = async (req, res) => {
     try {
         const userId = req.user_id;
@@ -227,6 +226,5 @@ authController.profile = async (req, res) => {
         })
     }
 }
-
 
 module.exports = authController
