@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const moment = require('moment')
 moment.locale("es")
 
+
 const messageSchema = new mongoose.Schema({
     chatId:{
         ref: 'Chat',
@@ -22,7 +23,7 @@ const messageSchema = new mongoose.Schema({
     date:{
         type:String,
         required:true,
-        default: () => moment().format("dddd, DD MMMM YYYY")
+        default: () => moment().format("dddd, DD MMMM YYYY H:mm:ss")
     },
 });
 

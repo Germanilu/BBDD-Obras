@@ -4,7 +4,7 @@ const Project_Manager = require('../models/Project_Manager');
 
 const chatController = {};
 
-//Create new consult 
+//Create new Chat 
 chatController.create = async (req,res) => {
     try {
         const clientId = req.user_id
@@ -12,7 +12,6 @@ chatController.create = async (req,res) => {
         const projectManager = await Project_Manager.find({_id: projectManagerId})
         const client = await Client.find({_id: clientId})
         
-
         //To unable project manager to send message to client first
         if(!client[0]){
             return res.status(400).json({
@@ -37,11 +36,11 @@ chatController.create = async (req,res) => {
             })
         }
 
-      
         const newChat = {
             clientId,
             projectManagerId
         }
+        
         await Chat.create(newChat)
 
         return res.status(200).json({
