@@ -10,8 +10,9 @@ messageController.create = async(req,res) => {
         const userSurname = req.user_surname
         const {message} = req.body
 
-        const foundChat = await Chat.find({_id: chatId})
-        if(!foundChat){
+        const foundChat = await Chat.find({_id:chatId})
+
+        if(foundChat.length<1){
             return res.status(500).json({
                 success: false,
                 message: "No existe esta chat! "
