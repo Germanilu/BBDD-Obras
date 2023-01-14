@@ -1,17 +1,17 @@
-const Consult = require('../models/Consult');
+const Chat = require('../models/Chat');
 const Message = require('../models/Message')
 
 const messageController = {}
 
 messageController.create = async(req,res) => {
     try {
-        const consultId = req.params.id
+        const chatId = req.params.id
         const userName = req.user_name
         const userSurname = req.user_surname
         const {message} = req.body
 
-        const foundConsult = await Consult.find({_id: consultId})
-        if(!foundConsult){
+        const foundChat = await Chat.find({_id: chatId})
+        if(!foundChat){
             return res.status(500).json({
                 success: false,
                 message: "No existe esta chat! "
@@ -19,7 +19,7 @@ messageController.create = async(req,res) => {
         }
 
         const newMessage = {
-            consultId,
+            chatId,
             userName,
             userSurname,
             message
@@ -53,9 +53,9 @@ messageController.create = async(req,res) => {
 
 messageController.getAllMessage = async(req,res) => {
     try {
-        const consultId = req.params.id
-        // const foundConsult = await Consult.find({_id: consultId})
-        const message = await Message.find({consultId: consultId})
+        const chatId = req.params.id
+        // const foundConsult = await Consult.find({_id: chatId})
+        const message = await Message.find({chatId: chatId})
         return res.status(200).json(
             {
                 success: true,

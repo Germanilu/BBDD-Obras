@@ -3,8 +3,8 @@ const moment = require('moment')
 moment.locale("es")
 
 const messageSchema = new mongoose.Schema({
-    consultId:{
-        ref: 'Consult',
+    chatId:{
+        ref: 'Chat',
         type: mongoose.Schema.Types.ObjectId
     },
     userName: {

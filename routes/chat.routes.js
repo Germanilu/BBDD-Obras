@@ -1,11 +1,11 @@
-const consultController = require('../controllers/ConsultController');
+const chatController = require('../controllers/ChatController');
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = require('express').Router();
 
 //Routes
 
-router.post('/newConsult/:id', verifyToken, consultController.create);
+router.post('/newChat/:id', verifyToken, chatController.create);
 
 
 

@@ -16,7 +16,7 @@ app.use(express.json())
 
 //Connect Routes
 const authRoutes = require('./routes/auth.routes');
-const consultRoutes = require('./routes/consult.routes');
+const consultRoutes = require('./routes/chat.routes');
 const messageRoutes = require('./routes/message.routes');
 //Routes
 app.use('/api',authRoutes);
