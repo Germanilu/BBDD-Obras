@@ -8,4 +8,5 @@ const router = require('express').Router();
 router.post('/newConsult/:id', verifyToken, consultController.create);
 
 
+
 module.exports = router;

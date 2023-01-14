@@ -2,12 +2,20 @@ const mongoose = require('mongoose');
 const moment = require('moment')
 moment.locale("es")
 
-const consultSchema = new mongoose.Schema({
-    clientId: {
+const messageSchema = new mongoose.Schema({
+    consultId:{
+        ref: 'Consult',
+        type: mongoose.Schema.Types.ObjectId
+    },
+    userName: {
         type: String,
         require: true
     },
-    projectManagerId:{
+    userSurname: {
+        type: String,
+        require: true
+    },
+    message: {
         type: String,
         require: true
     },
@@ -18,5 +26,5 @@ const consultSchema = new mongoose.Schema({
     },
 });
 
-const Consult = mongoose.model('Consult', consultSchema);
-module.exports = Consult;
+const Message = mongoose.model('Message', messageSchema);
+module.exports = Message;

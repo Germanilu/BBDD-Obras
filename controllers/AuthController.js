@@ -54,7 +54,6 @@ authController.registerProjectManager = async ( req, res) => {
 
         //Creating new project manager
         await Project_Manager.create(newProjectManager)
-        console.log(newProjectManager)
         
         return res.status(200).json({
             success: true,

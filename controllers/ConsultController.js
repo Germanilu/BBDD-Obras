@@ -7,11 +7,9 @@ const consultController = {};
 //Create new consult 
 consultController.create = async (req,res) => {
     try {
-        const {userMessage} = req.body;
         const clientId = req.user_id
-        const userName = req.user_name
-        const userSurname = req.user_surname
         const projectManagerId = req.params.id
+       
 
         const projectManager = await Project_Manager.find({_id: projectManagerId})
         const client = await Client.find({_id: clientId})
@@ -30,26 +28,16 @@ consultController.create = async (req,res) => {
             })
         }
 
-        if(!userMessage){
-            return res.status(401).json({
-                success:false,
-                message: "Tienes que escribir algo! "
-            })
-        }
       
         const newConsult = {
             clientId,
-            userName,
-            userSurname,
-            userMessage,
             projectManagerId
         }
-
         await Consult.create(newConsult)
 
         return res.status(200).json({
             success: true,
-            message: "Mensaje Enviado!",
+            message: "Consulta creada!",
             data: newConsult
         });   
 
@@ -57,7 +45,7 @@ consultController.create = async (req,res) => {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede enviar el mensaje"
+                    messagge: "No se puede crear la consulta"
 
                 });
         }
@@ -68,5 +56,5 @@ consultController.create = async (req,res) => {
         })
     }
 }
- 
+
 module.exports = consultController;

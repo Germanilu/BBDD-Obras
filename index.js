@@ -17,9 +17,11 @@ app.use(express.json())
 //Connect Routes
 const authRoutes = require('./routes/auth.routes');
 const consultRoutes = require('./routes/consult.routes');
+const messageRoutes = require('./routes/message.routes');
 //Routes
 app.use('/api',authRoutes);
 app.use('/api',consultRoutes);
+app.use('/api',messageRoutes);
 
 
 
