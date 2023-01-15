@@ -8,6 +8,7 @@ const router = require('express').Router();
 router.post('/newMessage/:id', verifyToken, messageController.create);
 router.get('/messages/:id',verifyToken,messageController.getAllMessage);
 router.delete('/message/:id',verifyToken,messageController.delete);
+router.put('/message/:id',verifyToken,messageController.update);
 
 
 

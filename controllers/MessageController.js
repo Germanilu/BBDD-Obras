@@ -57,8 +57,6 @@ messageController.create = async(req,res) => {
             })
         }
         
-      
-
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
@@ -126,6 +124,45 @@ messageController.getAllMessage = async(req,res) => {
         })
     }
 }
+
+
+messageController.update = async(req,res) => {
+    try {
+        const userId = req.user_id
+        const messageId = req.params.id
+        const {message} = req.body
+
+        //Find message by ID and check if user who write message is the same requesting to update
+        const newMessage = await Message.findById(messageId)   
+
+        if(userId != newMessage.userId){
+            return res.status(400).json({
+                success:true,
+                message: "No se puede modificar este mensaje"
+            })
+        }
+        //Updating existing message on chat
+        newMessage.message = message
+        await newMessage.save()
+
+        return res.status(200).json({
+            success: true,
+            message: "Mensaje modificado con exito!",
+            data:newMessage
+        })
+
+
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Imposible modificar el mensaje",
+                error: error?.message || error
+            }
+        )
+    }
+}
+
 
 //Deleting message in chat
 messageController.delete = async(req,res) => {
