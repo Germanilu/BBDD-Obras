@@ -7,6 +7,7 @@ const router = require('express').Router();
 
 router.post('/newChat/:id', verifyToken, chatController.create);
 router.get('/getallchats', verifyToken, chatController.getAllChats)
+router.get('/getchat/:id', verifyToken, chatController.getChatById)
 
 
 
