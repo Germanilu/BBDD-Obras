@@ -78,16 +78,38 @@ messageController.create = async(req,res) => {
 messageController.getAllMessage = async(req,res) => {
     try {
         const chatId = req.params.id
-        // const foundConsult = await Consult.find({_id: chatId})
-        const message = await Message.find({chatId: chatId})
-        // message.sort('-_id')
-        return res.status(200).json(
-            {
+        const userId = req.user_id
+
+        //Check if chat exist in DB
+        const foundChat = await Chat.find({_id:chatId})
+
+         //IF no chat reject
+         if(foundChat.length<1){
+            return res.status(500).json({
+                success: false,
+                message: "No existe esta chat! "
+            })
+        }
+
+        //If the user requesting to check the chat message is in the chat group he can send the message, otherwise throw error
+        if(foundChat[0].projectManagerId == userId || foundChat[0].clientId == userId){
+
+            const message = await Message.find({chatId: chatId})
+            return res.status(200).json(
+                {
+                    success: true,
+                    message: "Mensajes Chat",
+                    data: message
+                }
+            )
+
+        }else{
+            return res.status(500).json({
                 success: true,
-                message: "Mensajes Chat",
-                data: message
-            }
-        )
+                message: "No tienes permisos para ver los mensajes de este chat"
+            })
+        }
+
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
