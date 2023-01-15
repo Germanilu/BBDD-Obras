@@ -108,13 +108,13 @@ projectController.getMyProject = async(req,res) =>{
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede crear el Proyecto"
+                    messagge: "No se puede recuperar el Proyecto"
 
                 });
         }
         return res.status(500).json({
             success: false,
-            message: 'Unable to create new Project ',
+            message: 'Unable to retrieve Project ',
             error: error.message
         })
     }
@@ -162,13 +162,13 @@ projectController.ongoingProject = async(req,res) => {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede crear el Proyecto"
+                    messagge: "No se pueden ver tus Proyectos"
 
                 });
         }
         return res.status(500).json({
             success: false,
-            message: 'Unable to create new Project ',
+            message: 'Unable to retrieve new Project  ',
             error: error.message
         })
     }
@@ -215,13 +215,61 @@ projectController.endedProjects = async(req,res) => {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede crear el Proyecto"
+                    messagge: "No se pueden ver tus Proyectos"
 
                 });
         }
         return res.status(500).json({
             success: false,
-            message: 'Unable to create new Project ',
+            message: 'Unable to retrieve new Project ',
+            error: error.message
+        })
+    }
+}
+
+projectController.completeProject = async(req,res) => {
+    try {
+        const projectId = req.params.id
+        const role = req.user_role
+
+        //Avoid other than client to complete the project
+        if(role !== "63bed8e7c36f163968800d3f"){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para completar el proyecto"
+            })
+        }
+
+        //Find project by ID
+       const project = await Project.find({_id: projectId})
+
+        //Throw error if project already complete
+       if(project[0].isEnd === true){
+        return res.status(500).json({
+            success:false,
+            message: "El proyecto ya esta Completado"
+        })
+       }
+       //Editing project.isEnd to true and saving the project
+       project[0].isEnd = true
+       await project[0].save()
+
+       return res.status(500).json({
+        success: true,
+        message: "El proyecto se ha completado con exito!"
+       })
+
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede completar el proyecto"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to complete new Project ',
             error: error.message
         })
     }
