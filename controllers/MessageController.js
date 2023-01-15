@@ -11,18 +11,19 @@ messageController.create = async(req,res) => {
         const userSurname = req.user_surname
         const {message} = req.body
         const userRole = req.user_role
-        
+        const userId = req.user_id
 
         //Check if chat exist in DB
         const foundChat = await Chat.find({_id:chatId})
-        //IF no chat reject, otherwise add message
+        
+        //IF no chat reject
         if(foundChat.length<1){
             return res.status(500).json({
                 success: false,
                 message: "No existe esta chat! "
             })
         }
-        
+
         //If sender is ProjectManager and no message inside chat, unable PM to send first message
         const existMessage = await Message.find({chatId: chatId})
         if(userRole == "63bed8e7c36f163968800d40" && existMessage.length == 0 ){
@@ -32,20 +33,30 @@ messageController.create = async(req,res) => {
             })
         }
 
-        
-        const newMessage = {
-            chatId,
-            userName,
-            userSurname,
-            message
+        //If the user sending the message below to the chat, is finally able to send the message
+        if(foundChat[0].projectManagerId == userId || foundChat[0].clientId == userId){
+
+            const newMessage = {
+                chatId,
+                userName,
+                userSurname,
+                message
+            }
+    
+            await Message.create(newMessage)
+    
+            return res.status(200).json({
+                success: true,
+                message: "Mensaje Enviado!"
+            })
+        }else{
+            return res.status(200).json({
+                success: false,
+                message: "No tienes permisos para escribir en este chat"
+            })
         }
-
-        await Message.create(newMessage)
-
-        return res.status(200).json({
-            success: true,
-            message: "Mensaje Enviado!"
-        })
+        
+      
 
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
