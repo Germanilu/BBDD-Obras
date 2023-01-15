@@ -17,10 +17,12 @@ app.use(express.json())
 const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat.routes');
 const messageRoutes = require('./routes/message.routes');
+const projectRoutes = require('./routes/project.routes')
 //Routes
 app.use('/api',authRoutes);
 app.use('/api',chatRoutes);
 app.use('/api',messageRoutes);
+app.use('/api',projectRoutes);
 
 //Cors
 const cors = require('cors');

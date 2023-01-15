@@ -6,16 +6,20 @@ const projectSchema = new mongoose.Schema({
         require: true
     },
     workersNumber:{
-        type: String,
+        type: Number,
     },
     clientId: {
-        type: String,
-        require: true
+        ref: "Client",
+        type: mongoose.Schema.Types.ObjectId
     },
     projectManagerId:{
         ref: "Project_manager",
         type: mongoose.Schema.Types.ObjectId
     },
+    isEnd: {
+        type: Boolean,
+        require: true
+    }
     
 })
 
