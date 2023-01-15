@@ -6,7 +6,8 @@ const router = require('express').Router();
 //Routes
 
 router.post('/newMessage/:id', verifyToken, messageController.create);
-router.get('/consultMessages/:id',verifyToken,messageController.getAllMessage);
+router.get('/messages/:id',verifyToken,messageController.getAllMessage);
+router.delete('/message/:id',verifyToken,messageController.delete);
 
 
 

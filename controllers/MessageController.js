@@ -38,6 +38,7 @@ messageController.create = async(req,res) => {
 
             const newMessage = {
                 chatId,
+                userId,
                 userName,
                 userSurname,
                 message
@@ -122,6 +123,22 @@ messageController.getAllMessage = async(req,res) => {
             success: false,
             message: 'Hubo un error al cargar los mensajes',
             error: error.message
+        })
+    }
+}
+
+
+messageController.delete = async(req,res) => {
+    try {
+        const messageId = req.params
+        const message = await Message.findById(messageId)
+
+        console.log(message)
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error, no se puede borrar el mensaje",
+            data: error?.message || error
         })
     }
 }
