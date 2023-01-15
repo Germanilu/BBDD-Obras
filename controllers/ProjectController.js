@@ -120,4 +120,111 @@ projectController.getMyProject = async(req,res) =>{
     }
 }
 
+
+//Get Ongoing Project
+projectController.ongoingProject = async(req,res) => {
+    try { 
+        const userId = req.user_id
+        const role = req.user_role
+
+        //Check role of the requester, if he have project and project status is ongoing show project, otherwise throw error
+        if(role == "63bed8e7c36f163968800d40"){
+            const allProjects = await Project.find({projectManagerId : userId, isEnd:false})
+            if(allProjects.length == 0){
+                return res.status(500).json({
+                    success: true,
+                    message: 'No tienes ningun Proyecto',
+                })
+            }else{
+                return res.status(500).json({
+                    success: true,
+                    message: 'Aqui tus proyectos pendientes',
+                    data: allProjects
+                })
+            }
+        }else if( role == "63bed8e7c36f163968800d3f"){
+            const allProjects = await Project.find({clientId : userId, isEnd:false})
+            if(allProjects.length == 0){
+                return res.status(500).json({
+                    success: true,
+                    message: 'No tienes ningun Proyecto',
+                })
+            }else{
+                return res.status(500).json({
+                    success: true,
+                    message: 'Aqui tus proyectos pendientes',
+                    data: allProjects
+                })
+            }
+        }
+
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede crear el Proyecto"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to create new Project ',
+            error: error.message
+        })
+    }
+}
+
+//Check ended projects
+projectController.endedProjects = async(req,res) => {
+    try { 
+        const userId = req.user_id
+        const role = req.user_role
+
+        //Check role of the requester, if he have project and project status is ended show project, otherwise throw error
+        if(role == "63bed8e7c36f163968800d40"){
+            const allProjects = await Project.find({projectManagerId : userId, isEnd:true})
+            if(allProjects.length == 0){
+                return res.status(500).json({
+                    success: true,
+                    message: 'No tienes ningun Proyecto',
+                })
+            }else{
+                return res.status(500).json({
+                    success: true,
+                    message: 'Aqui tus proyectos terminados',
+                    data: allProjects
+                })
+            }
+        }else if( role == "63bed8e7c36f163968800d3f"){
+            const allProjects = await Project.find({clientId : userId, isEnd:true})
+            if(allProjects.length == 0){
+                return res.status(500).json({
+                    success: true,
+                    message: 'No tienes ningun Proyecto',
+                })
+            }else{
+                return res.status(500).json({
+                    success: true,
+                    message: 'Aqui tus proyectos terminados',
+                    data: allProjects
+                })
+            }
+        }
+
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede crear el Proyecto"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to create new Project ',
+            error: error.message
+        })
+    }
+}
+
 module.exports = projectController;
