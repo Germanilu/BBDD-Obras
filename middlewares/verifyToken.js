@@ -48,7 +48,7 @@ const verifyToken = (req, res, next) => {
         return res.status(500).json(
             {
                 success: false,
-                message: "Invalid Token"
+                message: "Token invalido"
             }
         );
     }

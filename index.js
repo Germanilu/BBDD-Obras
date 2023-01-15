@@ -1,5 +1,4 @@
 const express = require('express')
-
 require('dotenv').config();
 
 //Conect to database.js
@@ -23,8 +22,6 @@ app.use('/api',authRoutes);
 app.use('/api',chatRoutes);
 app.use('/api',messageRoutes);
 
-
-
 //Cors
 const cors = require('cors');
 let corsOptions = {    origin: "*",    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",    preflightContinue: false,     allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",    optionsSuccessStatus: 204};
@@ -32,10 +29,8 @@ let corsOptions = {    origin: "*",    methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
 //Request to app to use cors
 app.use(cors(corsOptions));
 
-
 //Setting port variable to .env file
 const port = process.env.PORT || 4000;
-
 
 //Welcome Rute
 app.get('/' , (req,res) => {   
@@ -46,7 +41,6 @@ app.get('/' , (req,res) => {
 app.get('*', (req,res) => {
     return res.status(404).send('404 Route not found')
 })
-
 
 db().then(() => {
     app.listen(port, () => {

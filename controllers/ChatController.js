@@ -25,9 +25,8 @@ chatController.create = async (req,res) => {
                 message: "Project Manager no encontrado"
             })
         }
-
+        //Check if chat already exist
        const checkChat = await Chat.find({projectManagerId: projectManagerId})
-        console.log(checkChat)
 
         if(checkChat.length > 0){
             return res.status(500).json({
@@ -35,7 +34,7 @@ chatController.create = async (req,res) => {
                 message: "Ya existe una chat con este project manager"
             })
         }
-
+        //Creating new chat
         const newChat = {
             clientId,
             projectManagerId
@@ -66,8 +65,7 @@ chatController.create = async (req,res) => {
 }
 
 
-//Enable user to see his chat's
-
+//Enable user to see his owns chat's
 chatController.getAllChats = async (req,res) => {
     try {
         const userId = req.user_id
@@ -123,12 +121,12 @@ chatController.getAllChats = async (req,res) => {
 //Get chat by ID
 chatController.getChatById = async(req,res) => {
     try {
-
         const chatId = req.params.id;
         const userId = req.user_id;
 
+        //Find chat and compare userId with client/PM id in chat if user is in chat, show chat, otherwise do not allow it
         const findChat = await Chat.find({_id:chatId})
-        //Compare userId with client/PM id in chat if user is in chat, show chat, otherwise do not allow it
+
         if(findChat[0].clientId == userId || findChat[0].projectManagerId == userId){
             return res.status(200).json({
                 success: true,
@@ -141,7 +139,6 @@ chatController.getChatById = async(req,res) => {
                 message: "No tienes permisos para ver este chat",
             })
         }
-        
         
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {

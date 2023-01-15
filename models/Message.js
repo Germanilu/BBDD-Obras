@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const moment = require('moment')
 moment.locale("es")
 
-
 const messageSchema = new mongoose.Schema({
     chatId:{
         ref: 'Chat',

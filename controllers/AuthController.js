@@ -16,7 +16,6 @@ authController.registerProjectManager = async ( req, res) => {
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
         
-
         //Checking password length
         if(password.length < 6 || password.length >10){
             return res.status(500).json({
@@ -51,7 +50,6 @@ authController.registerProjectManager = async ( req, res) => {
         //Mapping the object role and assign the id of the role to the object newProjectManager
         newProjectManager.role = foundRoles.map(role=> role._id)
 
-
         //Creating new project manager
         await Project_Manager.create(newProjectManager)
         
@@ -80,7 +78,6 @@ authController.registerClient = async ( req, res) => {
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
         
-
         //Checking password length
         if(password.length < 6 || password.length >10){
             return res.status(500).json({
@@ -113,7 +110,6 @@ authController.registerClient = async ( req, res) => {
         const foundRoles = await Role.find({name: {$in: newClient.role}})
         //Mapping the object role and assign the id of the role to the object newClient
         newClient.role = foundRoles.map(role=> role._id)
-
 
         //Creating new project manager
         await Client.create(newClient)
@@ -161,8 +157,6 @@ authController.login = async(req,res) => {
             })
         }
 
-        console.log(userConnecting)
-
         const isValidPassword = bcrypt.compareSync(password,userConnecting.password)
         if(!isValidPassword){
             return res.status(401).json({
@@ -184,15 +178,14 @@ authController.login = async(req,res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Welcome!',
+            message: 'Bienvenido!',
             token:token
         })
-
 
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Login Failed",
+            message: "Error al hacer login",
             error: error?.message || RangeError
         })
     }
@@ -205,6 +198,7 @@ authController.profile = async (req, res) => {
         const userId = req.user_id;
         const userRole = req.user_role;
         let user;
+        
         //Checking if Project Manager or Client and return
         if(userRole === "63bed8e7c36f163968800d40"){
             user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])

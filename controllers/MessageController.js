@@ -4,7 +4,6 @@ const Message = require('../models/Message')
 const messageController = {}
 
 messageController.create = async(req,res) => {
-
     try {
         const chatId = req.params.id
         const userName = req.user_name
@@ -35,7 +34,6 @@ messageController.create = async(req,res) => {
 
         //If the user sending the message below to the chat, is finally able to send the message
         if(foundChat[0].projectManagerId == userId || foundChat[0].clientId == userId){
-
             const newMessage = {
                 chatId,
                 userId,
@@ -72,6 +70,7 @@ messageController.create = async(req,res) => {
         })
     }
 }
+
 
 //Get message inside chat
 messageController.getAllMessage = async(req,res) => {
@@ -150,7 +149,6 @@ messageController.update = async(req,res) => {
             message: "Mensaje modificado con exito!",
             data:newMessage
         })
-
 
     } catch (error) {
         return res.status(500).json(

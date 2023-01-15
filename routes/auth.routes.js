@@ -8,5 +8,4 @@ router.post('/auth/clientSignIn', authController.registerClient);
 router.post('/auth/login', authController.login);
 router.get('/auth/profile', verifyToken, authController.profile);
 
-
 module.exports = router;
