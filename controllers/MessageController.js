@@ -74,7 +74,7 @@ messageController.create = async(req,res) => {
     }
 }
 
-
+//Get message inside chat
 messageController.getAllMessage = async(req,res) => {
     try {
         const chatId = req.params.id
