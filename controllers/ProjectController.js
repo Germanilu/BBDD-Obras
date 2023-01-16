@@ -277,4 +277,39 @@ projectController.completeProject = async(req,res) => {
     }
 }
 
+projectController.delete = async(req,res) => {
+    try {
+        const projectId = req.params.id
+        const role = req.user_role
+        
+        //Avoid other than client to delete the project
+        if(role !== client){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para completar el proyecto"
+            })
+        }
+        await Project.findOneAndDelete({_id: projectId})
+
+        return res.status(500).json({
+            success: true,
+            message: "El proyecto se ha Eliminado con exito!"
+           })
+
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede completar el proyecto"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to complete new Project ',
+            error: error.message
+        })
+    }
+}
+
 module.exports = projectController;

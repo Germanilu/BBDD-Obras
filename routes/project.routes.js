@@ -8,5 +8,5 @@ router.get('/myProjects', verifyToken, projectController.getMyProject);
 router.get('/ongoingProject', verifyToken, projectController.ongoingProject);
 router.get('/endedProject', verifyToken, projectController.endedProjects);
 router.put('/completeProject/:id', verifyToken, projectController.completeProject)
-
+router.delete('/deleteProject/:id', verifyToken, projectController.delete)
 module.exports = router;

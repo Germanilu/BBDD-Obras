@@ -32,7 +32,7 @@ messageController.create = async(req,res) => {
                 message: "No puedes enviar mensajes"
             })
         }
-
+      
         //If the user sending the message below to the chat, is finally able to send the message
         if(foundChat[0].projectManagerId == userId || foundChat[0].clientId == userId){
             const newMessage = {
