@@ -11,7 +11,7 @@ chatController.create = async (req,res) => {
         const projectManagerId = req.params.id
         const projectManager = await Project_Manager.find({_id: projectManagerId})
         const client = await Client.find({_id: clientId})
-        
+       
         //To unable project manager to send message to client first
         if(!client[0]){
             return res.status(400).json({
@@ -26,8 +26,8 @@ chatController.create = async (req,res) => {
             })
         }
         //Check if chat already exist
-       const checkChat = await Chat.find({projectManagerId: projectManagerId})
-
+       const checkChat = await Chat.find({projectManagerId: projectManagerId, clientId : clientId})
+       
         if(checkChat.length > 0){
             return res.status(500).json({
                 success: false,
