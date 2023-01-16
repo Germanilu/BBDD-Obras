@@ -286,7 +286,7 @@ projectController.delete = async(req,res) => {
         if(role !== client){
             return res.status(500).json({
                 success:false,
-                message: "No tienes permisos para completar el proyecto"
+                message: "No tienes permisos para eliminar el proyecto"
             })
         }
         await Project.findOneAndDelete({_id: projectId})
@@ -300,13 +300,13 @@ projectController.delete = async(req,res) => {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede completar el proyecto"
+                    messagge: "No se puede eliminar el proyecto"
 
                 });
         }
         return res.status(500).json({
             success: false,
-            message: 'Unable to complete new Project ',
+            message: 'Unable to delete new Project ',
             error: error.message
         })
     }
