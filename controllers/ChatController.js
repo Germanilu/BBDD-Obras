@@ -70,9 +70,12 @@ chatController.getAllChats = async (req,res) => {
     try {
         const userId = req.user_id
         const role = req.user_role
+        const Pm = "63bed8e7c36f163968800d40"
+        const client = "63bed8e7c36f163968800d3f"
+
 
         // Checking user role and search chats for userId, if no chats, show error message, otherwise show chat
-        if(role == "63bed8e7c36f163968800d40"){
+        if(role == Pm){
             const allChats = await Chat.find({ projectManagerId : userId })
             if(allChats.length !== 0){
                 return res.status(200).json({
@@ -86,7 +89,7 @@ chatController.getAllChats = async (req,res) => {
                     message: "No tienes ninguna Chat"
                 })
             }
-        }else if( role == "63bed8e7c36f163968800d3f"){
+        }else if( role == client){
             const allChats = await Chat.find({ clientId : userId })
             if(allChats.length !== 0){
                 return res.status(200).json({

@@ -11,6 +11,7 @@ messageController.create = async(req,res) => {
         const {message} = req.body
         const userRole = req.user_role
         const userId = req.user_id
+        const Pm = "63bed8e7c36f163968800d40"
 
         //Check if chat exist in DB
         const foundChat = await Chat.find({_id:chatId})
@@ -25,7 +26,7 @@ messageController.create = async(req,res) => {
 
         //If sender is ProjectManager and no message inside chat, unable PM to send first message
         const existMessage = await Message.find({chatId: chatId})
-        if(userRole == "63bed8e7c36f163968800d40" && existMessage.length == 0 ){
+        if(userRole == Pm && existMessage.length == 0 ){
             return res.status(500).json({
                 success: false,
                 message: "No puedes enviar mensajes"

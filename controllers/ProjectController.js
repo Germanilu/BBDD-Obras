@@ -1,6 +1,8 @@
 const Project = require('../models/Project');
 const Client = require('../models/Client')
 const projectController = {};
+const Pm = "63bed8e7c36f163968800d40"
+const client = "63bed8e7c36f163968800d3f"
 
 projectController.create = async(req,res) => {
     try {
@@ -18,7 +20,7 @@ projectController.create = async(req,res) => {
             })
         }
         //Checking role requester, if no PM, throw error
-        if(role !== "63bed8e7c36f163968800d40"){
+        if(role !== Pm){
             return res.status(500).json({
                 success:false,
                 message: "Solo un Project Manager puede iniciar un nuevo Proyecto"
@@ -74,7 +76,7 @@ projectController.getMyProject = async(req,res) =>{
         const userId = req.user_id
         const role = req.user_role
         //Checking user Role, if PM find by ProjectManagerId, if Client find by ClientId, If no Project throw error
-        if(role == "63bed8e7c36f163968800d40"){
+        if(role == Pm){
             const allProjects = await Project.find({projectManagerId : userId})
             if(allProjects.length !== 0){
                 return res.status(200).json({
@@ -88,7 +90,7 @@ projectController.getMyProject = async(req,res) =>{
                     message: "No tienes ninguna Proyecto al momento"
                 })
             }
-        }else if(role == "63bed8e7c36f163968800d3f"){
+        }else if(role == client){
             const allProjects = await Project.find({clientId : userId})
             if(allProjects.length !== 0){
                 return res.status(200).json({
@@ -128,7 +130,7 @@ projectController.ongoingProject = async(req,res) => {
         const role = req.user_role
 
         //Check role of the requester, if he have project and project status is ongoing show project, otherwise throw error
-        if(role == "63bed8e7c36f163968800d40"){
+        if(role == Pm){
             const allProjects = await Project.find({projectManagerId : userId, isEnd:false})
             if(allProjects.length == 0){
                 return res.status(500).json({
@@ -142,7 +144,7 @@ projectController.ongoingProject = async(req,res) => {
                     data: allProjects
                 })
             }
-        }else if( role == "63bed8e7c36f163968800d3f"){
+        }else if( role == client){
             const allProjects = await Project.find({clientId : userId, isEnd:false})
             if(allProjects.length == 0){
                 return res.status(500).json({
@@ -181,7 +183,7 @@ projectController.endedProjects = async(req,res) => {
         const role = req.user_role
 
         //Check role of the requester, if he have project and project status is ended show project, otherwise throw error
-        if(role == "63bed8e7c36f163968800d40"){
+        if(role == Pm){
             const allProjects = await Project.find({projectManagerId : userId, isEnd:true})
             if(allProjects.length == 0){
                 return res.status(500).json({
@@ -195,7 +197,7 @@ projectController.endedProjects = async(req,res) => {
                     data: allProjects
                 })
             }
-        }else if( role == "63bed8e7c36f163968800d3f"){
+        }else if( role == client){
             const allProjects = await Project.find({clientId : userId, isEnd:true})
             if(allProjects.length == 0){
                 return res.status(500).json({
@@ -233,7 +235,7 @@ projectController.completeProject = async(req,res) => {
         const role = req.user_role
 
         //Avoid other than client to complete the project
-        if(role !== "63bed8e7c36f163968800d3f"){
+        if(role !== client){
             return res.status(500).json({
                 success:false,
                 message: "No tienes permisos para completar el proyecto"
