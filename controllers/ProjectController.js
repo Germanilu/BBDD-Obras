@@ -280,21 +280,24 @@ projectController.completeProject = async(req,res) => {
 projectController.delete = async(req,res) => {
     try {
         const projectId = req.params.id
-        const role = req.user_role
-        
-        //Avoid other than client to delete the project
-        if(role !== client){
+        const userId = req.user_id
+        //Get the project and convert the client objectID into string
+        const project = await Project.findOne({_id: projectId})
+        const clientId = project.clientId.toString()
+        //If requerster is not the same as clientID on project throw error
+        if(userId !== clientId){
             return res.status(500).json({
-                success:false,
-                message: "No tienes permisos para eliminar el proyecto"
+                success: false,
+                message: "No tienes permisos para eliminar el proyecto!"
             })
         }
-        await Project.findOneAndDelete({_id: projectId})
 
-        return res.status(500).json({
+        //Get project and delete
+        await Project.findOneAndDelete({_id: projectId})
+        return res.status(200).json({
             success: true,
-            message: "El proyecto se ha Eliminado con exito!"
-           })
+            message: "Proyecto eliminado con exito!"
+        })
 
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
