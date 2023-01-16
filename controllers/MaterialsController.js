@@ -100,7 +100,6 @@ materialsController.getAllMaterialInProject = async(req,res) => {
 }
 
 //Get one material by his ID
-
 materialsController.getMaterialByID = async(req,res) => {
     try {
         const materialId = req.params.id;
@@ -143,7 +142,7 @@ materialsController.getMaterialByID = async(req,res) => {
     }
 }
 
-
+//To update material name or quantity
 materialsController.updateMaterial = async(req,res) => {
     try {
         const materialId = req.params.id;
@@ -230,7 +229,55 @@ try {
         message: 'Unable to update the Material state ',
         error: error.message
     })
+    }   
 }
+
+materialsController.delete = async(req,res) => {
+    try {
+        const materialId = req.params.id;
+        const userId = req.user_id;
+
+
+        const material = await Materials.find({_id:materialId})
+        console.log(material)
+        if(material.length === 0){
+            return res.status(500).json({
+                success:false,
+                message: "Material no encontrado"
+            })
+        }
+        material.map(e => {
+            const ProjectManagerID = e.projectManagerId.toString();
+            if(userId !== ProjectManagerID){
+                return res.status(500).json({
+                    success: false,
+                    message: "No tienes permisos para eliminar este material"
+                })
+            }
+        }) 
+
+        await Materials.findByIdAndDelete(material)
+
+        return res.status(200).json({
+            success:true,
+            message: "Material eliminado correctamente"
+        })
+        
+        
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede eliminar el material"
+    
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to delete the Material ',
+            error: error.message
+        })
+    }
 }
 
 
