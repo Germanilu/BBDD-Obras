@@ -232,29 +232,29 @@ projectController.endedProjects = async(req,res) => {
 projectController.completeProject = async(req,res) => {
     try {
         const projectId = req.params.id
-        const role = req.user_role
+        const userId = req.user_id
 
-        //Avoid other than client to complete the project
-        if(role !== client){
+        //Get the project and convert the client objectID into string
+        const project = await Project.findOne({_id: projectId})
+        const clientId = project.clientId.toString()
+        //If requerster is not the same as clientID on project throw error
+        if(userId !== clientId){
             return res.status(500).json({
-                success:false,
-                message: "No tienes permisos para completar el proyecto"
+                success: false,
+                message: "No tienes permisos para editar el proyecto!"
             })
         }
 
-        //Find project by ID
-       const project = await Project.find({_id: projectId})
-
         //Throw error if project already complete
-       if(project[0].isEnd === true){
+       if(project.isEnd === true){
         return res.status(500).json({
             success:false,
             message: "El proyecto ya esta Completado"
         })
        }
        //Editing project.isEnd to true and saving the project
-       project[0].isEnd = true
-       await project[0].save()
+       project.isEnd = true
+       await project.save()
 
        return res.status(500).json({
         success: true,
