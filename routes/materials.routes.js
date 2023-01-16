@@ -3,6 +3,6 @@ const verifyToken = require('../middlewares/verifyToken');
 const router = require('express').Router();
 
 //Routes
-router.post('/addMaterial', verifyToken, materialsController.create);
+router.post('/addMaterial/:id', verifyToken, materialsController.create);
 
 module.exports = router;
