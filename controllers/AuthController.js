@@ -197,13 +197,18 @@ authController.profile = async (req, res) => {
     try {
         const userId = req.user_id;
         const userRole = req.user_role;
+        const Pm = "63bed8e7c36f163968800d40"
+        const client = "63bed8e7c36f163968800d3f"
         let user;
         
-        //Checking if Project Manager or Client and return
-        if(userRole === "63bed8e7c36f163968800d40"){
-            user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
-        }else if( userRole === "63bed8e7c36f163968800d3f" ){
-            user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
+        //Check userRole and search in db
+        switch(userRole){
+            case Pm:
+                user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
+            break;
+            case client: 
+                user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
+            break;
         }
 
         return res.status(200).json({
