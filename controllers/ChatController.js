@@ -27,7 +27,7 @@ chatController.create = async (req,res) => {
         }
         //Check if chat already exist
        const checkChat = await Chat.find({projectManagerId: projectManagerId, clientId : clientId})
-       
+
         if(checkChat.length > 0){
             return res.status(500).json({
                 success: false,
@@ -130,19 +130,21 @@ chatController.getChatById = async(req,res) => {
         //Find chat and compare userId with client/PM id in chat if user is in chat, show chat, otherwise do not allow it
         const findChat = await Chat.find({_id:chatId})
 
-        if(findChat[0].clientId == userId || findChat[0].projectManagerId == userId){
-            return res.status(200).json({
-                success: true,
-                message: "Aqui la chat",
-                data: findChat
-            })
-        }else{
-            return res.status(400).json({
-                success: true,
-                message: "No tienes permisos para ver este chat",
-            })
-        }
-        
+        findChat.map(e => {
+            if(e.clientId == userId || e.projectManagerId == userId){
+                return res.status(200).json({
+                    success: true,
+                    message: "Aqui la chat",
+                    data: findChat
+                })
+            }else{
+                return res.status(400).json({
+                    success: true,
+                    message: "No tienes permisos para ver este chat",
+                })
+            }
+        })
+
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
