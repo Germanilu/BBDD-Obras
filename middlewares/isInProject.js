@@ -27,7 +27,6 @@ const isInProject = async (req,res,next) => {
             })
         }
 
-
         next();
 
     } catch (error) {

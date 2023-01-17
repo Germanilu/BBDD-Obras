@@ -107,23 +107,16 @@ materialsController.getMaterialByID = async(req,res) => {
 materialsController.updateMaterial = async(req,res) => {
     try {
         const materialId = req.params.id;
-        const userId = req.user_id;
         const {name, quantity} = req.body;
 
         //search for material and throw error if requester is not the PM material ID
         const material = await Materials.find({_id:materialId})
         material.map(e => {
-            const ProjectManagerID = e.projectManagerId.toString();
-            if(userId !== ProjectManagerID){
-                return res.status(500).json({
-                    success: false,
-                    message: "No tienes permisos para modificar este material"
-                })
-            }
             //Editing the material properties
             e.name = name || e.name;
             e.quantity = quantity || e.quantity;
         })
+
         //Saving new material and resolve
         await material[0].save()
         return res.status(200).json({
