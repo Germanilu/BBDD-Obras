@@ -76,22 +76,10 @@ materialsController.getAllMaterialInProject = async(req,res) => {
 materialsController.getMaterialByID = async(req,res) => {
     try {
         const materialId = req.params.id;
-        const userId = req.user_id;
 
         //Search the material by ID in DB and check if requester is the actual project manager, if not, throw error
         const material = await Materials.find({_id: materialId})
-        console.log(material)
-
-        material.map(e => {
-            const ProjectManagerID = e.projectManagerId.toString();
-            if(userId !== ProjectManagerID){
-                return res.status(500).json({
-                    success: false,
-                    message: "No tienes permisos para acceder a este material"
-                })
-            }
-        })
-
+    
         return res.status(200).json({
             success:true,
             message: "Aqui tienes el material que buscabas",
