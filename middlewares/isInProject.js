@@ -1,5 +1,5 @@
 
-//This middleware check if the requester is inside the project 
+//This middleware check if the requester(ProjectManager) is inside the project 
 const Materials = require('../models/Materials')
 const Project = require('../models/Project')
 const isInProject = async (req,res,next) => {

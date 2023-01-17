@@ -146,21 +146,14 @@ materialsController.updateMaterial = async(req,res) => {
 materialsController.updateMaterialStatus = async (req,res) => {
 try {
     const materialId = req.params.id;
-    const userId = req.user_id;
-
+   
     //Find material by ID, check if requester is PM if not throw error
     const material = await Materials.find({_id:materialId})
     material.map(e => {
-        const ProjectManagerID = e.projectManagerId.toString();
-        if(userId !== ProjectManagerID){
-            return res.status(500).json({
-                success: false,
-                message: "No tienes permisos para modificar este material"
-            })
-        }
         //Editing the material properties
         e.isEnd = true;
-    })
+        })
+
     //Saving material
     await material[0].save()
     return res.status(200).json({
@@ -189,28 +182,16 @@ try {
 materialsController.delete = async(req,res) => {
     try {
         const materialId = req.params.id;
-        const userId = req.user_id;
-
         const material = await Materials.find({_id:materialId})
-        console.log(material)
+        
         if(material.length === 0){
             return res.status(500).json({
                 success:false,
                 message: "Material no encontrado"
             })
         }
-        material.map(e => {
-            const ProjectManagerID = e.projectManagerId.toString();
-            if(userId !== ProjectManagerID){
-                return res.status(500).json({
-                    success: false,
-                    message: "No tienes permisos para eliminar este material"
-                })
-            }
-        }) 
 
         await Materials.findByIdAndDelete(material)
-
         return res.status(200).json({
             success:true,
             message: "Material eliminado correctamente"

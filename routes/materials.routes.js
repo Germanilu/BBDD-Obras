@@ -8,7 +8,7 @@ router.post('/addMaterial/:id', verifyToken,isInProject, materialsController.cre
 router.get('/projectMaterial/:id', verifyToken,isInProject, materialsController.getAllMaterialInProject);
 router.get('/material/:id', verifyToken,isInProject, materialsController.getMaterialByID);
 router.put('/updateMaterial/:id', verifyToken,isInProject, materialsController.updateMaterial);
-router.put('/updateMaterialStatus/:id', verifyToken, materialsController.updateMaterialStatus);
-router.delete('/material/:id', verifyToken, materialsController.delete);
+router.put('/updateMaterialStatus/:id', verifyToken,isInProject, materialsController.updateMaterialStatus);
+router.delete('/material/:id', verifyToken,isInProject, materialsController.delete);
 
 module.exports = router;
