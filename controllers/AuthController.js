@@ -197,25 +197,51 @@ authController.profile = async (req, res) => {
     try {
         const userId = req.user_id;
         const userRole = req.user_role;
-        const Pm = "63bed8e7c36f163968800d40"
-        const client = "63bed8e7c36f163968800d3f"
-        let user;
         
-        //Check userRole and search in db
-        switch(userRole){
-            case Pm:
-                user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
-            break;
-            case client: 
-                user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
-            break;
-        }
+        //Check if the userRole exist in DB and resolve promise with the name associated with the id in RoleModel or reject
+        new Promise (async(resolve,reject) => {
+            try {
+                const roles = await Role.find()
+                roles.map(e => {
+                    if(userRole === e._id.toString()){
+                        const name = e.name;
+                        console.log(name)
+                        resolve(name)
+                    }
+                })
+            } catch (error) {
+                reject(error)
+            }
+        })
 
-        return res.status(200).json({
-            success: true,
-            message: "User profile",
-            data: user
-        }) 
+        //Switch the roleName and check in DB then, resolve with user Profile
+        .then((roleName) => {
+            return new Promise(async(resolve,reject) => {
+                try {
+                    switch(roleName){
+                        case "project_manager":
+                            user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
+                            resolve(user)
+                            break;
+                            case "client": 
+                            user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
+                            resolve(user)
+                        break;
+                    }
+                } catch (error) {
+                    reject(error)
+                }
+            })
+        })
+        .then((profile) => {
+            return res.status(200).json({
+                success: true,
+                message: "Perfil Usuario",
+                data:profile
+            })
+        })
+
+        
 
     } catch (error) {
         return res.status(500).json({
