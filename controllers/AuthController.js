@@ -1,23 +1,23 @@
-const Project_Manager = require ("../models/Project_Manager");
+const Project_Manager = require("../models/Project_Manager");
 const Client = require("../models/Client");
 const Role = require("../models/Role");
 
-const bcrypt = require ('bcrypt');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const authController = {};
 
-authController.registerProjectManager = async ( req, res) => {
+authController.registerProjectManager = async (req, res) => {
     try {
         //Get body input
-        const { name, surname, nif, mobile, address,businessName, email, password } = req.body;
+        const { name, surname, nif, mobile, address, businessName, email, password } = req.body;
 
         //Encrypt Password
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
-        
+
         //Checking password length
-        if(password.length < 6 || password.length >10){
+        if (password.length < 6 || password.length > 10) {
             return res.status(500).json({
                 success: false,
                 message: 'La contraseña tiene que ser de entre 6 y 10 caracteres'
@@ -25,14 +25,14 @@ authController.registerProjectManager = async ( req, res) => {
         }
 
         //Checking if already exist
-        const existProjectManager = await Project_Manager.find({email:email})
-        if(existProjectManager.length >0){
+        const existProjectManager = await Project_Manager.find({ email: email })
+        if (existProjectManager.length > 0) {
             return res.status(500).json({
                 success: false,
                 message: 'Ya existe un Project Manager con este email'
             })
         }
-        
+
         const newProjectManager = {
             name,
             surname,
@@ -44,15 +44,15 @@ authController.registerProjectManager = async ( req, res) => {
             password: encryptedPassword,
             role: "project_manager"
         }
-        
+
         //Checking if role send in frontend exist in BBDD
-        const foundRoles = await Role.find({name: {$in: newProjectManager.role}})
+        const foundRoles = await Role.find({ name: { $in: newProjectManager.role } })
         //Mapping the object role and assign the id of the role to the object newProjectManager
-        newProjectManager.role = foundRoles.map(role=> role._id)
+        newProjectManager.role = foundRoles.map(role => role._id)
 
         //Creating new project manager
         await Project_Manager.create(newProjectManager)
-        
+
         return res.status(200).json({
             success: true,
             message: 'Project Manager creado exitosamente!'
@@ -69,7 +69,7 @@ authController.registerProjectManager = async ( req, res) => {
 
 
 //Post Client
-authController.registerClient = async ( req, res) => {
+authController.registerClient = async (req, res) => {
     try {
         //Get body input
         const { name, surname, nif, mobile, address, email, password } = req.body;
@@ -77,9 +77,9 @@ authController.registerClient = async ( req, res) => {
         //Encrypt Password
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt);
-        
+
         //Checking password length
-        if(password.length < 6 || password.length >10){
+        if (password.length < 6 || password.length > 10) {
             return res.status(500).json({
                 success: false,
                 message: 'La contraseña tiene que ser de entre 6 y 10 caracteres'
@@ -87,14 +87,14 @@ authController.registerClient = async ( req, res) => {
         }
 
         //Checking if already exist
-        const existClient = await Client.find({email:email})
-        if(existClient.length >0){
+        const existClient = await Client.find({ email: email })
+        if (existClient.length > 0) {
             return res.status(500).json({
                 success: false,
                 message: 'Ya existe un Cliente con este email'
             })
         }
-        
+
         const newClient = {
             name,
             surname,
@@ -105,16 +105,16 @@ authController.registerClient = async ( req, res) => {
             password: encryptedPassword,
             role: "client"
         }
-        
+
         //Checking if role send in frontend exist in BBDD
-        const foundRoles = await Role.find({name: {$in: newClient.role}})
+        const foundRoles = await Role.find({ name: { $in: newClient.role } })
         //Mapping the object role and assign the id of the role to the object newClient
-        newClient.role = foundRoles.map(role=> role._id)
+        newClient.role = foundRoles.map(role => role._id)
 
         //Creating new project manager
         await Client.create(newClient)
         console.log(newClient)
-        
+
         return res.status(200).json({
             success: true,
             message: 'Cliente creado exitosamente!'
@@ -131,11 +131,11 @@ authController.registerClient = async ( req, res) => {
 
 
 //Login
-authController.login = async(req,res) => {
+authController.login = async (req, res) => {
     try {
-        const { email, password} = req.body;
+        const { email, password } = req.body;
 
-        if(!email || !password){
+        if (!email || !password) {
             return res.status(400).json({
                 success: false,
                 message: 'Insertar Email y Contraseña'
@@ -144,21 +144,21 @@ authController.login = async(req,res) => {
 
         //Checking whoIs connecting 
         let userConnecting = await Promise.all([
-            Client.findOne({email:email}),
-            Project_Manager.findOne({email:email})
+            Client.findOne({ email: email }),
+            Project_Manager.findOne({ email: email })
         ])
         //Assign to userconnecting the object !null
-        userConnecting[0] !== null? userConnecting = userConnecting[0] : userConnecting = userConnecting[1]
-        
-        if(!userConnecting){
+        userConnecting[0] !== null ? userConnecting = userConnecting[0] : userConnecting = userConnecting[1]
+
+        if (!userConnecting) {
             return res.status(400).json({
                 success: false,
                 message: "Credenciales Erradas"
             })
         }
 
-        const isValidPassword = bcrypt.compareSync(password,userConnecting.password)
-        if(!isValidPassword){
+        const isValidPassword = bcrypt.compareSync(password, userConnecting.password)
+        if (!isValidPassword) {
             return res.status(401).json({
                 success: false,
                 message: "Email o Contraseña incorrecta"
@@ -166,7 +166,7 @@ authController.login = async(req,res) => {
         }
 
         const token = await jwt.sign({
-            user_id:userConnecting._id,
+            user_id: userConnecting._id,
             user_name: userConnecting.name,
             user_surname: userConnecting.surname,
             user_nif: userConnecting.nif,
@@ -174,12 +174,12 @@ authController.login = async(req,res) => {
             user_address: userConnecting.address,
             user_mobile: userConnecting.mobile,
             user_role: userConnecting.role[0]
-        }, process.env.JWT_SECRET, { expiresIn: '5h'})
+        }, process.env.JWT_SECRET, { expiresIn: '5h' })
 
         return res.status(200).json({
             success: true,
             message: 'Bienvenido!',
-            token:token
+            token: token
         })
 
     } catch (error) {
@@ -194,24 +194,37 @@ authController.login = async(req,res) => {
 
 //Check Profile User
 authController.profile = async (req, res) => {
+
     try {
         //Get the return of the promise in the middleware checkRole
-        let userProfile = req.userProfile
-        //Return user Profile
-        if(userProfile){
+        const roleName = req.roleName
+        const userId = req.user_id
+
+        switch (roleName) {
+            case "project_manager":
+                user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
+                break;
+            case "client":
+                user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
+                break;
+        }
+
+        if (user) {
             return res.status(200).json({
-                success:true,
-                message: "Aqui tu perfil",
-                data:userProfile
+                success: true,
+                message: "Aqui ti Perfil",
+                data: user
             })
         }
 
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: 'User profile failed',
+            message: "Error al recuperar el Perfil",
+            error: error?.message || RangeError
         })
     }
+
 }
 
 module.exports = authController
