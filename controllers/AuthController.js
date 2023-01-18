@@ -195,53 +195,16 @@ authController.login = async(req,res) => {
 //Check Profile User
 authController.profile = async (req, res) => {
     try {
-        const userId = req.user_id;
-        const userRole = req.user_role;
-        
-        //Check if the userRole exist in DB and resolve promise with the name associated with the id in RoleModel or reject
-        new Promise (async(resolve,reject) => {
-            try {
-                const roles = await Role.find()
-                roles.map(e => {
-                    if(userRole === e._id.toString()){
-                        const name = e.name;
-                        console.log(name)
-                        resolve(name)
-                    }
-                })
-            } catch (error) {
-                reject(error)
-            }
-        })
-
-        //Switch the roleName and check in DB then, resolve with user Profile
-        .then((roleName) => {
-            return new Promise(async(resolve,reject) => {
-                try {
-                    switch(roleName){
-                        case "project_manager":
-                            user = await Project_Manager.findOne({ _id: userId }).select(["-password", "-__v"])
-                            resolve(user)
-                            break;
-                            case "client": 
-                            user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
-                            resolve(user)
-                        break;
-                    }
-                } catch (error) {
-                    reject(error)
-                }
-            })
-        })
-        .then((profile) => {
+        //Get the return of the promise in the middleware checkRole
+        let userProfile = req.userProfile
+        //Return user Profile
+        if(userProfile){
             return res.status(200).json({
-                success: true,
-                message: "Perfil Usuario",
-                data:profile
+                success:true,
+                message: "Aqui tu perfil",
+                data:userProfile
             })
-        })
-
-        
+        }
 
     } catch (error) {
         return res.status(500).json({
