@@ -20,13 +20,12 @@ const projectTaskSchema = new mongoose.Schema({
     },
     createdAt: {
         type: String,
-        default: () => moment().format("dddd, DD MMMM YYYY H:mm:ss"),
-        expires: 3600
+        default: () => moment().format("dddd, DD MMMM YYYY H:mm:ss")
     },
     isEnd: {
         type: Boolean,
         require: true
-    }
+    },
     
 })
 

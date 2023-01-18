@@ -31,7 +31,8 @@ projectTaskController.create = async(req,res) => {
             name,
             description,
             workersNumber,
-            isEnd : false
+            projectId,
+            isEnd : false,
 
         }
 
