@@ -1,5 +1,5 @@
+//This middleware is used to check the role of the user getting the role ID of the user and returning the name of the role
 const Role = require('../models/Role')
-
 const checkRole = async (req, res, next) => {
     const userRole = req.user_role;
     try {
