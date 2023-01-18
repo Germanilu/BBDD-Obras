@@ -69,42 +69,31 @@ chatController.create = async (req,res) => {
 chatController.getAllChats = async (req,res) => {
     try {
         const userId = req.user_id
-        const role = req.user_role
-        const Pm = "63bed8e7c36f163968800d40"
-        const client = "63bed8e7c36f163968800d3f"
-
-
-        // Checking user role and search chats for userId, if no chats, show error message, otherwise show chat
-        if(role == Pm){
-            const allChats = await Chat.find({ projectManagerId : userId })
-            if(allChats.length !== 0){
-                return res.status(200).json({
-                    success: true,
-                    message: "Aqui tus Chat's",
-                    data: allChats
-                })
-            }else{
-                return res.status(400).json({
-                    success: true,
-                    message: "No tienes ninguna Chat"
-                })
-            }
-        }else if( role == client){
-            const allChats = await Chat.find({ clientId : userId })
-            if(allChats.length !== 0){
-                return res.status(200).json({
-                    success: true,
-                    message: "Aqui tus Chat's",
-                    data: allChats
-                })        
-            }else{
-                return res.status(400).json({
-                    success: true,
-                    message: "No tienes ninguna Chat"
-                })
-            }
+        //Request roleName from middleware
+        const roleName = req.roleName
+        //Switching rolename 
+        switch (roleName) {
+            case "project_manager":
+                allChats = await Chat.find({ projectManagerId : userId })
+                break;
+            case "client":
+                allChats = await Chat.find({ clientId : userId })
+                break;
         }
-        
+        //If no chat return 
+        if(allChats.length == 0){
+            return res.status(200).json({
+                success: false,
+                message: "No tienes ninguna chat abierta"
+            })
+        }
+    
+        return res.status(200).json({
+            success: true,
+            message: "Aqui tus Chat's",
+            data: allChats
+        })    
+    
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({

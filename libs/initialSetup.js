@@ -10,7 +10,7 @@ const Role = require("../models/Role");
         const values = await Promise.all([
             new Role ({ name: "client"}).save(),
             new Role ({ name: "project_manager"}).save(),
-            new Role ({ name: "worker"}).save(),
+            new Role ({ name: "employee"}).save(),
             new Role ({ name: "admin"}).save(),
         ]);
         console.log(values);
