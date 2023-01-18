@@ -19,12 +19,15 @@ const chatRoutes = require('./routes/chat.routes');
 const messageRoutes = require('./routes/message.routes');
 const projectRoutes = require('./routes/project.routes')
 const materialsRoutes = require('./routes/materials.routes')
+const projectTaskRoutes = require('./routes/projectTask.routes')
+
 //Routes
 app.use('/api',authRoutes);
 app.use('/api',chatRoutes);
 app.use('/api',messageRoutes);
 app.use('/api',projectRoutes);
 app.use('/api',materialsRoutes);
+app.use('/api',projectTaskRoutes);
 
 //Cors
 const cors = require('cors');
