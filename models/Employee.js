@@ -31,6 +31,11 @@ const EmployeeSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
     },
+    projectId: {
+        ref: "Project",
+        type: mongoose.Schema.Types.ObjectId,
+        default:null
+    },
     role:[
         {
         ref: "Role",

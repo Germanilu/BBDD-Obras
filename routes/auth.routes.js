@@ -6,6 +6,7 @@ const router = require('express').Router();
 //Routes
 router.post('/auth/projectManagerSignIn', authController.registerProjectManager);
 router.post('/auth/clientSignIn', authController.registerClient);
+router.post('/auth/employeeSignIn',verifyToken,checkRole, authController.registerNewEmployee);
 router.post('/auth/login', authController.login);
 router.get('/auth/profile', verifyToken,checkRole, authController.profile);
 

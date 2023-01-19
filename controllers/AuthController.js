@@ -1,6 +1,7 @@
 const Project_Manager = require("../models/Project_Manager");
 const Client = require("../models/Client");
 const Role = require("../models/Role");
+const Employee = require("../models/Employee");
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -113,7 +114,6 @@ authController.registerClient = async (req, res) => {
 
         //Creating new project manager
         await Client.create(newClient)
-        console.log(newClient)
 
         return res.status(200).json({
             success: true,
@@ -128,6 +128,72 @@ authController.registerClient = async (req, res) => {
         })
     }
 }
+
+//Register new Employee
+authController.registerNewEmployee = async(req,res) => {
+    try {
+        const {name,surname,nif,mobile,address,email,password,projectId} = req.body;
+        
+        if(req.roleName !== "project_manager"){
+            return res.status(500).json({
+                success:false,
+                message:"No se puede registrar el trabajador"
+            })
+        }
+        //Encrypt Password
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt);
+
+        //Checking password length
+        if (password.length < 6 || password.length > 10) {
+            return res.status(500).json({
+                success: false,
+                message: 'La contraseña tiene que ser de entre 6 y 10 caracteres'
+            })
+        }
+
+        //Checking if already exist
+        const existEmployee = await Employee.find({ email: email })
+        if (existEmployee.length > 0) {
+            return res.status(500).json({
+                success: false,
+                message: 'Ya existe un Empleado con este email'
+            })
+        }
+
+        const newEmployee = {
+            name,
+            surname,
+            nif,
+            mobile,
+            address,
+            email,
+            password: encryptedPassword,
+            projectId : null,
+            role: "employee"
+        }
+
+         //Checking if role send in frontend exist in BBDD
+         const foundRoles = await Role.find({ name: { $in: newEmployee.role } })
+         //Mapping the object role and assign the id of the role to the object newEmployee
+         newEmployee.role = foundRoles.map(role => role._id)
+
+         //Create the new employee
+         await Employee.create(newEmployee)
+         return res.status(200).json({
+            success: true,
+            message: 'Empleado creado exitosamente!'
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "No se puede registrar el Empleado",
+            error: error?.message || RangeError
+        })
+    }
+    }
+
 
 
 //Login
@@ -145,11 +211,19 @@ authController.login = async (req, res) => {
         //Checking whoIs connecting 
         let userConnecting = await Promise.all([
             Client.findOne({ email: email }),
-            Project_Manager.findOne({ email: email })
+            Project_Manager.findOne({ email: email }),
+            Employee.findOne({email: email})
         ])
-        //Assign to userconnecting the object !null
-        userConnecting[0] !== null ? userConnecting = userConnecting[0] : userConnecting = userConnecting[1]
 
+        //Assign to userconnecting the object !null
+        if(userConnecting[0] !== null){
+            userConnecting = userConnecting[0]
+        }else if(userConnecting[1] !== null){
+            userConnecting = userConnecting[1]
+        }else{
+            userConnecting = userConnecting[2]
+        }
+        
         if (!userConnecting) {
             return res.status(400).json({
                 success: false,
@@ -207,7 +281,12 @@ authController.profile = async (req, res) => {
             case "client":
                 user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
                 break;
+            case "employee":
+                user = await Employee.findOne({ _id: userId }).select(["-password", "-__v"])
+                break;
         }
+
+        console.log(user)
 
         if (user) {
             return res.status(200).json({

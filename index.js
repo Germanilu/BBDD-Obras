@@ -20,6 +20,7 @@ const messageRoutes = require('./routes/message.routes');
 const projectRoutes = require('./routes/project.routes')
 const materialsRoutes = require('./routes/materials.routes')
 const projectTaskRoutes = require('./routes/projectTask.routes')
+const employeeRoutes = require('./routes/employee.routes')
 
 //Routes
 app.use('/api',authRoutes);
@@ -28,6 +29,7 @@ app.use('/api',messageRoutes);
 app.use('/api',projectRoutes);
 app.use('/api',materialsRoutes);
 app.use('/api',projectTaskRoutes);
+app.use('/api',employeeRoutes);
 
 //Cors
 const cors = require('cors');
