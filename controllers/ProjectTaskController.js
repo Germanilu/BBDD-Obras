@@ -1,7 +1,7 @@
 const ProjectTask = require('../models/ProjectTask')
-
 const projectTaskController = {}
 
+//Create new Task
 projectTaskController.create = async(req,res) => {
     try {
         const projectId = req.params.id
@@ -40,7 +40,6 @@ projectTaskController.create = async(req,res) => {
             message: "Tarea creada con exito!"
         })
         
-
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
@@ -57,13 +56,13 @@ projectTaskController.create = async(req,res) => {
     }
 }
 
+//Get all task by project id
 projectTaskController.getAllTasksByProject = async(req,res) => {
     try {
         const projectId = req.params.id
 
         //Find all task inside the project 
         const tasks = await ProjectTask.find({projectId: projectId})
-        
         //If no task throw error
         if(!tasks){
             return res.status(404).json({
@@ -94,7 +93,9 @@ projectTaskController.getAllTasksByProject = async(req,res) => {
     }
 }
 
-projectTaskController.openTasks = async(req,res) => {
+
+//Get all pending Tasks
+projectTaskController.pending = async(req,res) => {
     try {
         const projectId = req.params.id 
 
@@ -122,7 +123,7 @@ projectTaskController.openTasks = async(req,res) => {
     }
 }
 
-
+//Get all endedTasks
 projectTaskController.closeTasks = async(req,res) => {
     try {
         const projectId = req.params.id 
@@ -153,7 +154,7 @@ projectTaskController.closeTasks = async(req,res) => {
 }
 
 
-
+//Edit Task info
 projectTaskController.editTask = async(req,res) => {
     try {
         const taskId = req.params.id;
@@ -210,6 +211,115 @@ projectTaskController.editTask = async(req,res) => {
         return res.status(500).json({
             success: false,
             message: 'Unable to edit Tasks ',
+            error: error.message
+        })
+    }
+}
+
+//Mark as complete Task
+projectTaskController.markAsComplete = async(req,res) => {
+    try {
+        const taskId = req.params.id;
+        const projectManagerId = req.user_id
+
+        //Find task in Model
+        const task = await ProjectTask.findOne({_id:taskId})
+        //If no task, throw error
+        if(!task){
+            return res.status(404).json({
+                success: false,
+                messagge: "No se puede encontrar la tarea"
+
+            });
+        }
+
+        //If found task but already completed, throw error
+        if(task.isEnd == true){
+            return res.status(404).json({
+                success: true,
+                messagge: "No se puede modificar la tarea, ya esta completada",
+            });
+        }
+
+         //If requester is not PM, throw error
+         if(task.projectManagerId.toString() !== projectManagerId){
+            return res.status(404).json({
+                success: true,
+                messagge: "No tienes permisos para modificar esta tarea",
+            });
+        }
+
+        //Saving task and return 
+        task.isEnd = true
+        await task.save()
+
+        return res.status(200).json({
+            success:true,
+            message:"Tarea completada con exito!",
+            data:task
+        })
+
+        
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede marcar como terminada la tarea"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to edit Tasks ',
+            error: error.message
+        })
+    }
+}
+
+//Delete task
+projectTaskController.deleteTask = async(req,res) => {
+    try {
+
+        const taskId = req.params.id;
+        const projectManagerId = req.user_id
+        //Find task in Model
+        const deleteTask = await ProjectTask.findOne({_id:taskId})
+        //If no task, throw error
+        if(!deleteTask){
+            return res.status(404).json({
+                success: false,
+                messagge: "No se puede encontrar la tarea"
+
+            });
+        }
+
+         //If requester is not PM, throw error
+         if(deleteTask.projectManagerId.toString() !== projectManagerId){
+            return res.status(404).json({
+                success: true,
+                messagge: "No tienes permisos para eliminar esta tarea",
+            });
+        }
+
+        await deleteTask.delete()
+
+        return res.status(200).json({
+            success:true,
+            message: "Tarea eliminada correctamente"
+        })
+
+            
+    } catch (error) {
+        if (error?.message.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({
+                    success: true,
+                    messagge: "No se puede eliminar la tarea"
+
+                });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to delete Tasks ',
             error: error.message
         })
     }
