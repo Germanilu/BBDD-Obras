@@ -6,5 +6,6 @@ const router = require('express').Router();
 
 //Routes
 router.put('/assignToProject/:id',verifyToken,isInProject, employeeController.assignToProject);
+router.put('/removeFromProject/:id',verifyToken,isInProject, employeeController.removeFromProject);
 
 module.exports = router;
