@@ -1,11 +1,12 @@
 const projectTaskController = require('../controllers/ProjectTaskController');
 const verifyToken = require('../middlewares/verifyToken');
-const checkRole = require('../middlewares/checkRole')
+const checkRole = require('../middlewares/checkRole');
+const isInProject = require('../middlewares/isInProject');
 const router = require('express').Router();
 
 //Routes
-router.post('/newProjectTask/:id', verifyToken,checkRole, projectTaskController.create);
-// router.get('/tasks/:id', verifyToken,checkRole, projectTaskController.getAllTasksByProject);
+router.post('/newProjectTask/:id', verifyToken,checkRole,isInProject, projectTaskController.create);
+router.get('/tasks/:id', verifyToken,isInProject, projectTaskController.getAllTasksByProject);
 
 
 
