@@ -43,6 +43,7 @@ materialsController.create = async(req,res) => {
     }
 }
 
+
 //Get all materials use in the project
 materialsController.getAllMaterialInProject = async(req,res) => {
     try {
@@ -72,13 +73,37 @@ materialsController.getAllMaterialInProject = async(req,res) => {
     }
 }
 
+
 //Get one material by his ID
 materialsController.getMaterialByID = async(req,res) => {
     try {
         const materialId = req.params.id;
+        const projectManagerId = req.user_id;
 
-        //Search the material by ID in DB and check if requester is the actual project manager, if not, throw error
+        //Checking from checkRole Middleware
+        if(req.roleName !== "project_manager"){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para ver este material"
+            })
+        }
+
+        //Find material and checking if exist and if requester ID is who create the material if false, throw error
         const material = await Materials.find({_id: materialId})
+
+        if(material[0].projectManagerId.toString() !== projectManagerId){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para ver este material"
+            })
+        }
+
+        if(!material){
+            return res.status(500).json({
+                success:false,
+                message: "El material no existe"
+            })
+        }
     
         return res.status(200).json({
             success:true,
@@ -103,22 +128,32 @@ materialsController.getMaterialByID = async(req,res) => {
     }
 }
 
+
 //To update material name or quantity
 materialsController.updateMaterial = async(req,res) => {
     try {
         const materialId = req.params.id;
         const {name, quantity} = req.body;
+        const userId = req.user_id;
 
         //search for material and throw error if requester is not the PM material ID
         const material = await Materials.find({_id:materialId})
+        if(material[0].projectManagerId.toString() !== userId){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para modificar este material"
+            })
+        }
+
+        //Editing the material 
         material.map(e => {
-            //Editing the material properties
             e.name = name || e.name;
             e.quantity = quantity || e.quantity;
         })
 
         //Saving new material and resolve
         await material[0].save()
+
         return res.status(200).json({
             success: true,
             message: "Material actualizado con exito",
@@ -146,11 +181,20 @@ materialsController.updateMaterial = async(req,res) => {
 materialsController.updateMaterialStatus = async (req,res) => {
 try {
     const materialId = req.params.id;
-   
+    const userId = req.user_id;
+
     //Find material by ID, check if requester is PM if not throw error
     const material = await Materials.find({_id:materialId})
+
+    if(material[0].projectManagerId.toString() !== userId){
+        return res.status(500).json({
+            success:false,
+            message: "No tienes permisos para modificar este material!"
+        })
+    }
+
+    //Editing the material properties
     material.map(e => {
-        //Editing the material properties
         e.isEnd = true;
         })
 
@@ -161,7 +205,6 @@ try {
         message: "Estado del material actualizado con exito!",
         data: material
     })
-
 
 } catch (error) {
     if (error?.message.includes('Cast to ObjectId failed')) {
@@ -179,11 +222,14 @@ try {
     }   
 }
 
+
 materialsController.delete = async(req,res) => {
     try {
         const materialId = req.params.id;
+        const userId = req.user_id;
+
+        //Find material in DB, if no material throw error
         const material = await Materials.find({_id:materialId})
-        
         if(material.length === 0){
             return res.status(500).json({
                 success:false,
@@ -191,12 +237,19 @@ materialsController.delete = async(req,res) => {
             })
         }
 
+        //Check if userId is who created the material, if not, throw error
+        if(material[0].projectManagerId.toString() !== userId){
+            return res.status(500).json({
+                success:false,
+                message: "No tienes permisos para eliminar este material!"
+            })
+        }
+        
         await Materials.findByIdAndDelete(material)
         return res.status(200).json({
             success:true,
             message: "Material eliminado correctamente"
         })
-        
         
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {
@@ -213,6 +266,5 @@ materialsController.delete = async(req,res) => {
         })
     }
 }
-
 
 module.exports = materialsController;

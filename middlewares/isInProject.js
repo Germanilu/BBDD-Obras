@@ -4,14 +4,14 @@ const Project = require('../models/Project')
 const isInProject = async (req,res,next) => {
     try {
         const userId = req.user_id
-        const paramsId = req.params.id
+        const projectId = req.params.id
         
         //Checking params ID inside Project 
-        const project = await Project.findOne({_id: paramsId})
+        const project = await Project.findOne({_id: projectId})
         if(!project){
             return res.status(500).json({
                 success:false,
-                message: "No tienes permisos para interactuar con este proyecto!"
+                message: "No tienes permisos para interactuar con este proyecto"
             })
         }
         
