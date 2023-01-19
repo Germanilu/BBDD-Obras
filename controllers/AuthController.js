@@ -132,7 +132,7 @@ authController.registerClient = async (req, res) => {
 //Register new Employee
 authController.registerNewEmployee = async(req,res) => {
     try {
-        const {name,surname,nif,mobile,address,email,password} = req.body;
+        const {name,surname,nif,mobile,address,email,password,projectId} = req.body;
         
         if(req.roleName !== "project_manager"){
             return res.status(500).json({
@@ -169,6 +169,7 @@ authController.registerNewEmployee = async(req,res) => {
             address,
             email,
             password: encryptedPassword,
+            projectId,
             role: "employee"
         }
 
@@ -280,7 +281,12 @@ authController.profile = async (req, res) => {
             case "client":
                 user = await Client.findOne({ _id: userId }).select(["-password", "-__v"])
                 break;
+            case "employee":
+                user = await Employee.findOne({ _id: userId }).select(["-password", "-__v"])
+                break;
         }
+
+        console.log(user)
 
         if (user) {
             return res.status(200).json({
