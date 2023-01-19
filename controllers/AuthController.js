@@ -227,4 +227,5 @@ authController.profile = async (req, res) => {
 
 }
 
+
 module.exports = authController
