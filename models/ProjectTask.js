@@ -18,6 +18,10 @@ const projectTaskSchema = new mongoose.Schema({
         ref: "Project",
         type: mongoose.Schema.Types.ObjectId
     },
+    projectManagerId: {
+        ref: "Project_manager",
+        type: mongoose.Schema.Types.ObjectId
+    },
     createdAt: {
         type: String,
         default: () => moment().format("dddd, DD MMMM YYYY H:mm:ss")
