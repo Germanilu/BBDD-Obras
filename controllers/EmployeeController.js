@@ -55,7 +55,7 @@ employeeController.removeFromProject = async(req,res) => {
                 message:"Empleado no encontrado"
             })
         }
-        
+
         employee.projectId = null
         await employee.save()
         return res.status(200).json({
@@ -63,7 +63,33 @@ employeeController.removeFromProject = async(req,res) => {
             message:"Empleado removido correctamente al proyecto"
         })
 
-        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error al asignar a un proyecto",
+            error: error?.message || RangeError
+        })
+    }
+}
+
+employeeController.getAllEmployeeInProject = async(req,res) => {
+    try {
+        const projectId = req.params.id
+        const employeeInProject = await Employee.findOne({projectId:projectId}) 
+        //If no employee return 
+        if(employeeInProject == null){
+            return res.status(500).json({
+                success:false,
+                message: "No hay empleados asignados a este proyecto"
+            })
+        }
+        //return employee in project
+        return res.status(200).json({
+            success:true,
+            message:"Aqui los empleados de este proyecto",
+            data: employeeInProject
+        })
+
     } catch (error) {
         return res.status(500).json({
             success: false,
