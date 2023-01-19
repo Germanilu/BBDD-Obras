@@ -33,7 +33,8 @@ const EmployeeSchema = new mongoose.Schema({
     },
     projectId: {
         ref: "Project",
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        default:null
     },
     role:[
         {

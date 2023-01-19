@@ -157,7 +157,7 @@ authController.registerNewEmployee = async(req,res) => {
         if (existEmployee.length > 0) {
             return res.status(500).json({
                 success: false,
-                message: 'Ya existe un Trabajador con este email'
+                message: 'Ya existe un Empleado con este email'
             })
         }
 
@@ -169,7 +169,7 @@ authController.registerNewEmployee = async(req,res) => {
             address,
             email,
             password: encryptedPassword,
-            projectId,
+            projectId : null,
             role: "employee"
         }
 
@@ -182,7 +182,7 @@ authController.registerNewEmployee = async(req,res) => {
          await Employee.create(newEmployee)
          return res.status(200).json({
             success: true,
-            message: 'Cliente creado exitosamente!'
+            message: 'Empleado creado exitosamente!'
         });
         
     } catch (error) {
