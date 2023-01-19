@@ -9,6 +9,7 @@ router.post('/newProjectTask/:id', verifyToken,checkRole,isInProject, projectTas
 router.get('/tasks/:id', verifyToken,isInProject, projectTaskController.getAllTasksByProject);
 router.get('/ongoingTasks/:id', verifyToken,isInProject, projectTaskController.openTasks);
 router.get('/endedTasks/:id', verifyToken,isInProject, projectTaskController.closeTasks);
+router.put('/editTask/:id', verifyToken, projectTaskController.editTask);
 
 
 
