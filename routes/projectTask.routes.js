@@ -5,6 +5,7 @@ const router = require('express').Router();
 
 //Routes
 router.post('/newProjectTask/:id', verifyToken,checkRole, projectTaskController.create);
+// router.get('/tasks/:id', verifyToken,checkRole, projectTaskController.getAllTasksByProject);
 
 
 

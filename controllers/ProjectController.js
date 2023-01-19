@@ -38,9 +38,9 @@ projectController.create = async(req,res) => {
 
         //Create new Project
         const newProject = {
-            projectManagerId,
             clientId,
             name,
+            projectManagerId,
             workersNumber,
             isEnd
         };

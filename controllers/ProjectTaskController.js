@@ -29,9 +29,9 @@ projectTaskController.create = async(req,res) => {
 
         const newTask = {
             name,
+            projectId,
             description,
             workersNumber,
-            projectId,
             isEnd : false,
 
         }
@@ -58,5 +58,26 @@ projectTaskController.create = async(req,res) => {
         })
     }
 }
+
+// projectTaskController.getAllTasksByProject = async(req,res) => {
+//     try {
+//         const userId = req.user_id
+//         console.log(userId)
+
+//     } catch (error) {
+//         if (error?.message.includes('Cast to ObjectId failed')) {
+//             return res.status(404).json({
+//                     success: true,
+//                     messagge: "No se ha encontrado ninguna tarea"
+
+//                 });
+//         }
+//         return res.status(500).json({
+//             success: false,
+//             message: 'Unable to find Tasks ',
+//             error: error.message
+//         })
+//     }
+// }
 
 module.exports = projectTaskController;
