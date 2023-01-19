@@ -1,10 +1,10 @@
 const Project_Manager = require("../models/Project_Manager");
 const Client = require("../models/Client");
 const Role = require("../models/Role");
+const Employee = require("../models/Employee");
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Employee = require("../models/Employee");
 
 const authController = {};
 
@@ -210,11 +210,19 @@ authController.login = async (req, res) => {
         //Checking whoIs connecting 
         let userConnecting = await Promise.all([
             Client.findOne({ email: email }),
-            Project_Manager.findOne({ email: email })
+            Project_Manager.findOne({ email: email }),
+            Employee.findOne({email: email})
         ])
-        //Assign to userconnecting the object !null
-        userConnecting[0] !== null ? userConnecting = userConnecting[0] : userConnecting = userConnecting[1]
 
+        //Assign to userconnecting the object !null
+        if(userConnecting[0] !== null){
+            userConnecting = userConnecting[0]
+        }else if(userConnecting[1] !== null){
+            userConnecting = userConnecting[1]
+        }else{
+            userConnecting = userConnecting[2]
+        }
+        
         if (!userConnecting) {
             return res.status(400).json({
                 success: false,
