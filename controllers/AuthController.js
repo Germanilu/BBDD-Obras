@@ -4,6 +4,7 @@ const Role = require("../models/Role");
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Employee = require("../models/Employee");
 
 const authController = {};
 
@@ -113,7 +114,6 @@ authController.registerClient = async (req, res) => {
 
         //Creating new project manager
         await Client.create(newClient)
-        console.log(newClient)
 
         return res.status(200).json({
             success: true,
@@ -128,6 +128,71 @@ authController.registerClient = async (req, res) => {
         })
     }
 }
+
+//Register new Employee
+authController.registerNewEmployee = async(req,res) => {
+    try {
+        const {name,surname,nif,mobile,address,email,password} = req.body;
+        
+        if(req.roleName !== "project_manager"){
+            return res.status(500).json({
+                success:false,
+                message:"No se puede registrar el trabajador"
+            })
+        }
+        //Encrypt Password
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt);
+
+        //Checking password length
+        if (password.length < 6 || password.length > 10) {
+            return res.status(500).json({
+                success: false,
+                message: 'La contraseña tiene que ser de entre 6 y 10 caracteres'
+            })
+        }
+
+        //Checking if already exist
+        const existEmployee = await Employee.find({ email: email })
+        if (existEmployee.length > 0) {
+            return res.status(500).json({
+                success: false,
+                message: 'Ya existe un Trabajador con este email'
+            })
+        }
+
+        const newEmployee = {
+            name,
+            surname,
+            nif,
+            mobile,
+            address,
+            email,
+            password: encryptedPassword,
+            role: "employee"
+        }
+
+         //Checking if role send in frontend exist in BBDD
+         const foundRoles = await Role.find({ name: { $in: newEmployee.role } })
+         //Mapping the object role and assign the id of the role to the object newEmployee
+         newEmployee.role = foundRoles.map(role => role._id)
+
+         //Create the new employee
+         await Employee.create(newEmployee)
+         return res.status(200).json({
+            success: true,
+            message: 'Cliente creado exitosamente!'
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "No se puede registrar el Empleado",
+            error: error?.message || RangeError
+        })
+    }
+    }
+
 
 
 //Login
