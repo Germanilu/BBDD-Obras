@@ -21,6 +21,7 @@ const projectRoutes = require('./routes/project.routes')
 const materialsRoutes = require('./routes/materials.routes')
 const projectTaskRoutes = require('./routes/projectTask.routes')
 const employeeRoutes = require('./routes/employee.routes')
+const workRoutes = require('./routes/work.routes')
 
 //Routes
 app.use('/api',authRoutes);
@@ -30,6 +31,7 @@ app.use('/api',projectRoutes);
 app.use('/api',materialsRoutes);
 app.use('/api',projectTaskRoutes);
 app.use('/api',employeeRoutes);
+app.use('/api',workRoutes);
 
 //Cors
 const cors = require('cors');

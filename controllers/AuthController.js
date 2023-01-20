@@ -152,7 +152,7 @@ authController.registerNewEmployee = async(req,res) => {
             })
         }
 
-        //Checking if already exist
+        //Checking if already exist employee
         const existEmployee = await Employee.find({ email: email })
         if (existEmployee.length > 0) {
             return res.status(500).json({
