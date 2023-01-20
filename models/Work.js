@@ -5,7 +5,6 @@ moment.locale("es")
 const workSchema = new mongoose.Schema({
     hours:{
         type:Number,
-        require: true
     },
     taskId: {
         ref: "ProjectTask",
