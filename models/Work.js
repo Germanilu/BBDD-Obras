@@ -16,7 +16,7 @@ const workSchema = new mongoose.Schema({
     },
     startedAt: {
         type: String,
-        default: () => moment().format("dddd, DD MMMM YYYY H:mm:ss")
+        default: () => moment().format(" DD-MM-YYYY H:mm:ss")
     },
     endedAt: {
         type: String,
