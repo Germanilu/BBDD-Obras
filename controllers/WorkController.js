@@ -59,6 +59,13 @@ workController.terminate = async(req,res) => {
 
         //Find the work that the employee is working at in work table
         const work = await Work.findOne({_id: workId,employeeId:workerId})
+
+        if(work.isEnd == true){
+            return res.status(500).json({
+                success:false,
+                message: "El trabajo ya ha sido marcado como completado, no es posible completarlo de nuevo"
+            })
+        }
         
         //Create an endedHour with moment
         const endedHour = moment().format(" DD-MM-YYYY H:mm:ss")
