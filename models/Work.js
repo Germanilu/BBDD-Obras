@@ -21,7 +21,11 @@ const workSchema = new mongoose.Schema({
     endedAt: {
         type: String,
         default: "Ongoing"
-    }
+    },
+    isEnd: {
+        type: Boolean,
+        require: true
+    },
     
 })
 

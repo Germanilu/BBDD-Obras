@@ -29,7 +29,8 @@ workController.create = async(req,res) => {
         //Create new work
         const newWork = {
             taskId,
-            employeeId:workerId
+            employeeId:workerId,
+            isEnd:false
         }
 
         await Work.create(newWork)
@@ -51,46 +52,44 @@ workController.create = async(req,res) => {
 }
 
 
-// workController.terminate = async(req,res) => {
-//     try {
-//         const workerId = req.user_id;
-//         const workId = req.params.id
+workController.terminate = async(req,res) => {
+    try {
+        const workerId = req.user_id;
+        const workId = req.params.id
 
-//         const work = await Work.findOne({_id: workId,employeeId:workerId})
-//         // console.log(work)
+        //Find the work that the employee is working at in work table
+        const work = await Work.findOne({_id: workId,employeeId:workerId})
+        
+        //Create an endedHour with moment
+        const endedHour = moment().format(" DD-MM-YYYY H:mm:ss")
+        
+        //This moment function calculate the difference between endedHour and started hour and return HH:mm:ss format
+        const diff = moment.utc(moment(endedHour,"DD-MM-YYYY HH:mm:ss").diff(moment(work.startedAt,"DD-MM-YYYY HH:mm:ss"))).format("HH:mm:ss")
 
+        //This function convert the hour into minute multiply * 60, then adding the result to the minutes and multiply by 60 then adding second
+        let hourWorked = diff.split(':').reduce((acc,time) => (60 * acc) + +time)/60
+        //Then hourWorked it's convert into hours with 2 decimal positions
+        hourWorked = (hourWorked /60).toFixed(2)
 
-//         const hour = moment().format(" DD MM YYYY H:mm:ss")
+        //Saving task and return 
+        work.endedAt = endedHour
+        work.hours = hourWorked
+        work.isEnd = true
+        await work.save()
 
-    
-//         //Saving task and return 
-//         work.endedAt = hour
-//         await work.save()
-
-
-//         let fechainicio = work.startedAt    
-//         let fechafinal = work.endedAt
-
-//         console.log(fechainicio)
-//         console.log(fechafinal)
-
-//         const x = moment(fechainicio).fromNow()
-
-//         console.log(x)
-
-//         return res.status(200).json({
-//             success:true,
-//             message:"Trabajo terminado correctamente"
-//         })
+        return res.status(200).json({
+            success:true,
+            message:"Trabajo terminado correctamente"
+        })
 
 
-//     } catch (error) {
-//         return res.status(500).json({
-//             success: false,
-//             message: 'Unable to terminate Task ',
-//             error: error.message
-//         })
-//     }
-// }
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to terminate Task ',
+            error: error.message
+        })
+    }
+}
 
 module.exports = workController
