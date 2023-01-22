@@ -11,7 +11,7 @@ workController.create = async(req,res) => {
     try {
         const workerId = req.user_id;
         const taskId = req.params.id
-
+        
         //Find task and employee in models
         const task = await ProjectTask.findOne({_id: taskId})
         const employee = await Employee.findOne({_id:workerId})
@@ -25,7 +25,17 @@ workController.create = async(req,res) => {
                 
             })
         }
-        //Create new work
+
+        //Get all works ongoing by task id, if there is work ongoing with that task id, return error
+        const works = await Work.find({taskId:taskId,isEnd:false})
+            if(works.length !== 0){
+                return res.status(500).json({
+                success:false,
+                message:"Ya estas trabajando en esta Tarea!"
+                })
+            }
+
+        //Create new work 
         const newWork = {
             taskId,
             employeeId:workerId,
