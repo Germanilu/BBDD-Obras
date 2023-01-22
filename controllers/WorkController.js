@@ -1,5 +1,4 @@
 const Employee = require('../models/Employee');
-const Project = require('../models/Project');
 const ProjectTask = require('../models/ProjectTask');
 const Work = require('../models/Work');
 const moment = require('moment')
@@ -26,10 +25,22 @@ workController.create = async(req,res) => {
                 
             })
         }
-        //Create new work
+
+        //Get all works ongoing by task id, if there is work ongoing with that task id, return error
+        const works = await Work.find({taskId:taskId,isEnd:false})
+            if(works.length !== 0){
+                return res.status(500).json({
+                success:false,
+                message:"Ya estas trabajando en esta Tarea!"
+                })
+            }
+
+        //Create new work 
         const newWork = {
             taskId,
-            employeeId:workerId
+            employeeId:workerId,
+            isEnd:false,
+            projectId:task.projectId
         }
 
         await Work.create(newWork)
@@ -51,46 +62,79 @@ workController.create = async(req,res) => {
 }
 
 
-// workController.terminate = async(req,res) => {
-//     try {
-//         const workerId = req.user_id;
-//         const workId = req.params.id
+workController.getAllMyWorks = async(req,res) => {
+    try {
+        const employeeId = req.user_id
 
-//         const work = await Work.findOne({_id: workId,employeeId:workerId})
-//         // console.log(work)
+        const works = await Work.find({employeeId:employeeId})
+        //If employee do not have any work started
+        if(works.length == 0){
+            return res.status(500).json({
+                success:true,
+                message: "No tienes ningun trabajo "
+            })
+        }
+        //Return all employee work
+        return res.status(200).json({
+            success:true,
+            message: "Aqui todos tus trabajos",
+            data:works
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to create new Task ',
+            error: error.message
+        })
+    }
+}
+
+//To end the work 
+workController.terminate = async(req,res) => {
+    try {
+        const workerId = req.user_id;
+        const workId = req.params.id
+
+        //Find the work that the employee is working at in work table
+        const work = await Work.findOne({_id: workId,employeeId:workerId})
+
+        if(work.isEnd == true){
+            return res.status(500).json({
+                success:false,
+                message: "El trabajo ya ha sido marcado como completado, no es posible completarlo de nuevo"
+            })
+        }
+        
+        //Create an endedHour with moment
+        const endedHour = moment().format(" DD-MM-YYYY H:mm:ss")
+        
+        //This moment function calculate the difference between endedHour and started hour and return HH:mm:ss format
+        const diff = moment.utc(moment(endedHour,"DD-MM-YYYY HH:mm:ss").diff(moment(work.startedAt,"DD-MM-YYYY HH:mm:ss"))).format("HH:mm:ss")
+
+        //This function convert the hour into minute multiply * 60, then adding the result to the minutes and multiply by 60 then adding second
+        let hourWorked = diff.split(':').reduce((acc,time) => (60 * acc) + +time)/60
+        //Then hourWorked it's convert into hours with 2 decimal positions
+        hourWorked = (hourWorked /60).toFixed(2)
+
+        //Saving task and return 
+        work.endedAt = endedHour
+        work.hours = hourWorked
+        work.isEnd = true
+        await work.save()
+
+        return res.status(200).json({
+            success:true,
+            message:"Trabajo terminado correctamente"
+        })
 
 
-//         const hour = moment().format(" DD MM YYYY H:mm:ss")
-
-    
-//         //Saving task and return 
-//         work.endedAt = hour
-//         await work.save()
-
-
-//         let fechainicio = work.startedAt    
-//         let fechafinal = work.endedAt
-
-//         console.log(fechainicio)
-//         console.log(fechafinal)
-
-//         const x = moment(fechainicio).fromNow()
-
-//         console.log(x)
-
-//         return res.status(200).json({
-//             success:true,
-//             message:"Trabajo terminado correctamente"
-//         })
-
-
-//     } catch (error) {
-//         return res.status(500).json({
-//             success: false,
-//             message: 'Unable to terminate Task ',
-//             error: error.message
-//         })
-//     }
-// }
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to terminate Task ',
+            error: error.message
+        })
+    }
+}
 
 module.exports = workController

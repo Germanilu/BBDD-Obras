@@ -6,6 +6,7 @@ const router = require('express').Router();
 
 //Routes
 router.get('/getEmployeeInProject/:id',verifyToken,isInProject, employeeController.getAllEmployeeInProject);
+router.get('/workedHour/:id',verifyToken, employeeController.getWorkedHourById);
 router.put('/assignToProject/:id',verifyToken,isInProject, employeeController.assignToProject);
 router.put('/removeFromProject/:id',verifyToken,isInProject, employeeController.removeFromProject);
 

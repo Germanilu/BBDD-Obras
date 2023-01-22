@@ -1,6 +1,7 @@
 const Employee = require('../models/Employee');
 const Project = require('../models/Project');
-
+const Work = require('../models/Work')
+const ProjectTask = require('../models/ProjectTask')
 const employeeController = {}
 
 employeeController.assignToProject = async(req,res) => {
@@ -90,6 +91,39 @@ employeeController.getAllEmployeeInProject = async(req,res) => {
             data: employeeInProject
         })
 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error al asignar a un proyecto",
+            error: error?.message || RangeError
+        })
+    }
+}
+
+//Get the worked hour by employee ID passing ProjectID via Body
+employeeController.getWorkedHourById = async(req,res) => {
+    try {
+
+        const employeeId = req.params.id;
+        const {projectId} = req.body
+        let totalHourWorkedByProject = 0;
+
+        //Checking inside Work model the data with the below criteria
+        const works = await Work.find({employeeId:employeeId, isEnd:true, projectId:projectId})
+        //Mapping the result and calculate the ammount of hours worket by project
+        works.map(work => {
+            totalHourWorkedByProject += work.hours
+        })
+
+        return res.status(200).json({
+            success:true,
+            message:"Aqui las horas trabajadas",
+            data:works, totalHourWorkedByProject
+        })
+        
+
+
+        
     } catch (error) {
         return res.status(500).json({
             success: false,

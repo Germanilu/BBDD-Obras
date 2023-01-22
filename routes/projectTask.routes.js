@@ -12,6 +12,7 @@ router.get('/endedTasks/:id', verifyToken,isInProject, projectTaskController.clo
 router.put('/editTask/:id', verifyToken, projectTaskController.editTask);
 router.put('/markascomplete/:id', verifyToken, projectTaskController.markAsComplete);
 router.delete('/deleteTask/:id', verifyToken, projectTaskController.deleteTask);
+router.get('/allTasksInProject/:id', verifyToken, projectTaskController.getAllTaskInProject)
 
 
 
