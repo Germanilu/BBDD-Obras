@@ -23,6 +23,7 @@ const projectTaskRoutes = require('./routes/projectTask.routes')
 const employeeRoutes = require('./routes/employee.routes')
 const workRoutes = require('./routes/work.routes')
 const chatPM_EmployeeRoutes = require('./routes/chatPM_Employee.routes')
+const MessagePM_EmployeeRoutes = require('./routes/messagePM_Employee.routes')
 
 //Routes
 app.use('/api',authRoutes);
@@ -34,6 +35,8 @@ app.use('/api',projectTaskRoutes);
 app.use('/api',employeeRoutes);
 app.use('/api',workRoutes);
 app.use('/api',chatPM_EmployeeRoutes);
+app.use('/api',MessagePM_EmployeeRoutes);
+
 
 //Cors
 const cors = require('cors');
