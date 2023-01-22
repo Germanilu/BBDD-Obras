@@ -1,4 +1,6 @@
+const Project = require('../models/Project')
 const ProjectTask = require('../models/ProjectTask')
+const Employee = require('../models/Employee')
 const projectTaskController = {}
 
 //Create new Task
@@ -317,6 +319,40 @@ projectTaskController.deleteTask = async(req,res) => {
 
                 });
         }
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to delete Tasks ',
+            error: error.message
+        })
+    }
+}
+
+
+
+projectTaskController.getAllTaskInProject = async(req,res) => {
+    try {
+        const projectId = req.params.id
+        const employee = await Employee.find({projectId:projectId})
+        
+        //If employee is not in the project, reject
+        if(employee.length == 0){
+            return res.status(500).json({
+                success:true,
+                message:"No perteneces a este proyecto, no puedes ver las tareas del mismo"
+            })
+        }
+
+        //Find Tasks and return it
+        const tasks = await ProjectTask.find({projectId:projectId})
+        return res.status(200).json({
+            success:true,
+            message:"Aqui todas las tareas del proyecto",
+            data:tasks
+        })
+
+
+
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: 'Unable to delete Tasks ',
