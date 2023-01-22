@@ -29,7 +29,8 @@ workController.create = async(req,res) => {
         const newWork = {
             taskId,
             employeeId:workerId,
-            isEnd:false
+            isEnd:false,
+            projectId:task.projectId
         }
 
         await Work.create(newWork)

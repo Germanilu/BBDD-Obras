@@ -26,6 +26,10 @@ const workSchema = new mongoose.Schema({
         type: Boolean,
         require: true
     },
+    projectId: {
+        ref: "Project",
+        type: mongoose.Schema.Types.ObjectId
+    }
     
 })
 
