@@ -11,7 +11,7 @@ workController.create = async(req,res) => {
     try {
         const workerId = req.user_id;
         const taskId = req.params.id
-        
+
         //Find task and employee in models
         const task = await ProjectTask.findOne({_id: taskId})
         const employee = await Employee.findOne({_id:workerId})
@@ -62,6 +62,34 @@ workController.create = async(req,res) => {
 }
 
 
+workController.getAllMyWorks = async(req,res) => {
+    try {
+        const employeeId = req.user_id
+
+        const works = await Work.find({employeeId:employeeId})
+        //If employee do not have any work started
+        if(works.length == 0){
+            return res.status(500).json({
+                success:true,
+                message: "No tienes ningun trabajo "
+            })
+        }
+        //Return all employee work
+        return res.status(200).json({
+            success:true,
+            message: "Aqui todos tus trabajos",
+            data:works
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to create new Task ',
+            error: error.message
+        })
+    }
+}
+
+//To end the work 
 workController.terminate = async(req,res) => {
     try {
         const workerId = req.user_id;
