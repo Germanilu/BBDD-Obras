@@ -50,7 +50,7 @@ const port = process.env.PORT || 4000;
 
 //Welcome Rute
 app.get('/' , (req,res) => {   
-    return res.send('BBD Obras ')
+    return res.send('BBDD Obras ')
 });
 
 //If no rute, reject with 404
