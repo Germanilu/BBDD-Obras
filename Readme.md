@@ -18,7 +18,7 @@ If you would like to try the complete application, please refer to this github r
 
 # How to use it
 
-To be able to use it you will need to install Postman (https://www.postman.com/) and aim to this Heroku server: https://bbobras.onrender.com/
+To be able to use it you will need to install Postman (https://www.postman.com/) and aim to this render server: https://bbobras.onrender.com/
 
 
 # Endpoints
