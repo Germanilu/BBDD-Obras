@@ -25,6 +25,23 @@ const workRoutes = require("./routes/work.routes");
 const chatPM_EmployeeRoutes = require("./routes/chatPM_Employee.routes");
 const MessagePM_EmployeeRoutes = require("./routes/messagePM_Employee.routes");
 
+
+//Cors
+const cors = require("cors");
+
+let corsOptions = {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    preflightContinue: false,
+    allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
+    optionsSuccessStatus: 204,
+};
+
+//Request to app to use cors
+app.use(cors(corsOptions));
+
+
 //Routes
 app.use("/api", authRoutes);
 app.use("/api", chatRoutes);
@@ -36,21 +53,6 @@ app.use("/api", employeeRoutes);
 app.use("/api", workRoutes);
 app.use("/api", chatPM_EmployeeRoutes);
 app.use("/api", MessagePM_EmployeeRoutes);
-
-//Cors
-const cors = require("cors");
-let corsOptions = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-  preflightContinue: false,
-  credentials:true,    
-  allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
-  optionsSuccessStatus: 204,
-  origin: "*"
-};
-
-//Request to app to use cors
-app.use(cors(corsOptions));
 
 //Setting port variable to .env file
 const port = process.env.PORT || 4000;
