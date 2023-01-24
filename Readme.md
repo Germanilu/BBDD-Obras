@@ -37,7 +37,7 @@ BODY {
         "businessName": 
         "email": 
         "password":   
-    } 
+} 
 
 URL:  /api/auth/clientSignIn --> To register an account for the Client
 BODY {   
@@ -49,7 +49,7 @@ BODY {
         "businessName": 
         "email": 
         "password":   
-    } 
+} 
 
 URL:  /api/auth/employeeSignIn --> To register an account for the Employee
 BODY {   
@@ -59,8 +59,8 @@ BODY {
         "mobile": 
         "address": 
         "email": 
-        "password":   
-    } 
+        "password":    
+} 
 
 URL:  /api/auth/login --> To Login
 BODY {
@@ -111,7 +111,6 @@ URL: /api/auth/profile --> User can see his profile
 URL: /api/auth/getEmployeeInProject/:id (ProjectID) --> PM can get all employee working inside the project
 
 URL: /api/auth/workedHour/:id (EmployeeID) --> ProjectManager can get the hour worked by the employee
-
 BODY {
     "projectId": 
 }
