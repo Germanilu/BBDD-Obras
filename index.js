@@ -47,6 +47,7 @@ let corsOptions = {
   credentials:true,    
   allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
   optionsSuccessStatus: 200,
+  Origin: "*"
 };
 
 //Request to app to use cors
