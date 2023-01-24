@@ -41,13 +41,12 @@ app.use("/api", MessagePM_EmployeeRoutes);
 const cors = require("cors");
 let corsOptions = {
   origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   preflightContinue: false,
   credentials:true,    
   allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
-  optionsSuccessStatus: 200,
-  Origin: "*"
+  optionsSuccessStatus: 204,
+  origin: "*"
 };
 
 //Request to app to use cors
