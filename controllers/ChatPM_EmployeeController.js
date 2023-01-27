@@ -9,45 +9,16 @@ chatController.create = async (req,res) => {
     try {
         const requester = req.user_id
         const user2 = req.params.id
-        const projectManager = await Project_Manager.find({_id: requester})
-        const employee = await Employee.find({_id: user2})
+        const roleName = req.roleName
 
-        if(projectManager.length == 0){
-            const employee = await Employee.find({_id:requester})
-            const projectManager = await Project_Manager.find({_id:user2})
-            //Check if chat already exist
-            const checkChat = await ChatPM_Employee.find({projectManagerId: user2, clientId : requester})
+        if(roleName == "project_manager"){
 
-            if(checkChat.length > 0){
-                return res.status(500).json({
-                    success: false,
-                    message: "Ya existe una chat con este project manager"
-                })
-            }
+            const projectManager = await Project_Manager.findOne({_id: requester})
+            const employee = await Employee.findOne({_id: user2})
 
-
-            //Creating new chat
-            const newChat = {
-                EmployeeId: requester,
-                employeeName: employee[0].name + " " + employee[0].surname,
-                projectManagerId:user2,
-                projectManagerName:projectManager[0].name + " " + projectManager[0].surname
-            }
-            
-            await ChatPM_Employee.create(newChat)
-
-            return res.status(200).json({
-                success: true,
-                message: "Chat creada!",
-                data: newChat
-            });   
-
-        }
-        
-        //Check if chat already exist
-        const checkChat = await ChatPM_Employee.find({projectManagerId: requester, clientId : user2})
-
-        if(checkChat.length > 0){
+             //Check if chat already exist
+        const checkChat = await ChatPM_Employee.find({projectManagerId: requester, EmployeeId : user2})
+        if(checkChat.length !== 0){
             return res.status(500).json({
                 success: false,
                 message: "Ya existe una chat con este Trabajador"
@@ -58,9 +29,9 @@ chatController.create = async (req,res) => {
         //Creating new chat
         const newChat = {
             EmployeeId: user2,
-            employeeName: employee[0].name + " " + employee[0].surname,
+            employeeName: employee.name + " " + employee.surname,
             projectManagerId:requester,
-            projectManagerName:projectManager[0].name + " " + projectManager[0].surname
+            projectManagerName:projectManager.name + " " + projectManager.surname
         }
 
         
@@ -71,6 +42,36 @@ chatController.create = async (req,res) => {
             message: "Chat creada!",
             data: newChat
         });   
+        }else if(roleName == "employee"){
+            const employee = await Employee.findOne({_id:requester})
+            const projectManager = await Project_Manager.findOne({_id:user2})
+            //Check if chat already exist
+            const checkChat = await ChatPM_Employee.find({projectManagerId: user2, EmployeeId : requester})
+            if(checkChat.length !== 0){
+                return res.status(500).json({
+                    success: false,
+                    message: "Ya existe una chat con este project manager"
+                })
+            }
+
+
+            //Creating new chat
+            const newChat = {
+                EmployeeId: requester,
+                employeeName: employee.name + " " + employee.surname,
+                projectManagerId:user2,
+                projectManagerName:projectManager.name + " " + projectManager.surname
+            }
+            
+            await ChatPM_Employee.create(newChat)
+
+            return res.status(200).json({
+                success: true,
+                message: "Chat creada!",
+                data: newChat
+            });   
+        }      
+       
 
     } catch (error) {
         if (error?.message.includes('Cast to ObjectId failed')) {

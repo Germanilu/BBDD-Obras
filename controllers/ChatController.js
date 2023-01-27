@@ -13,7 +13,7 @@ chatController.create = async (req,res) => {
 
         const client = await Client.findOne({ _id: clientId})
         const projectManager = await Project_Manager.findOne({_id:projectManagerId})
-        console.log(projectManager)
+
         //To unable project manager to send message to client first
         if(!client){
             return res.status(400).json({

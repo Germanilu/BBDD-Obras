@@ -4,7 +4,7 @@ const checkRole = require('../middlewares/checkRole')
 const router = require('express').Router();
 
 //Routes
-router.post('/startNewChat/:id', verifyToken, chatController.create);
+router.post('/startNewChat/:id', verifyToken,checkRole, chatController.create);
 router.get('/getchatById/:id', verifyToken, chatController.getChatById)
 
 module.exports = router;
