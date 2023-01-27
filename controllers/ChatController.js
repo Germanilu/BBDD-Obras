@@ -10,24 +10,26 @@ chatController.create = async (req,res) => {
     try {
         const clientId = req.user_id
         const projectManagerId = req.params.id
-        const projectManager = await Project_Manager.find({_id: projectManagerId})
-        const client = await Client.find({_id: clientId})
-        
+
+        const client = await Client.findOne({ _id: clientId})
+        const projectManager = await Project_Manager.findOne({_id:projectManagerId})
+        console.log(projectManager)
         //To unable project manager to send message to client first
-        if(!client[0]){
+        if(!client){
             return res.status(400).json({
                 success: false,
                 message: "No se puede crear la chat"
             })
         }
-        if(!projectManager[0]){
+        if(!projectManager){
             return res.status(404).json({
                 success: false,
                 message: "Project Manager no encontrado"
             })
         }
+        
         //Check if chat already exist
-       const checkChat = await Chat.find({projectManagerId: projectManagerId, clientId : clientId})
+        const checkChat = await Chat.find({projectManagerId:projectManagerId})
 
         if(checkChat.length > 0){
             return res.status(500).json({
@@ -35,17 +37,16 @@ chatController.create = async (req,res) => {
                 message: "Ya existe una chat con este project manager"
             })
         }
+        
         //Creating new chat
         const newChat = {
             clientId,
-            clientName:client[0].name + " " + client[0].surname,
+            clientName:client.name + " " + client.surname,
             projectManagerId,
-            projectManagerName: projectManager[0].name + " " + projectManager[0].surname
+            projectManagerName: projectManager.name + " " + projectManager.surname
         }
-        console.log(newChat)
         
         await Chat.create(newChat)
-
         return res.status(200).json({
             success: true,
             message: "Chat creada!",
@@ -56,7 +57,8 @@ chatController.create = async (req,res) => {
         if (error?.message.includes('Cast to ObjectId failed')) {
             return res.status(404).json({
                     success: true,
-                    messagge: "No se puede crear la chat"
+                    messagge: "No se puede crear la chat",
+                    error:error
 
                 });
         }
