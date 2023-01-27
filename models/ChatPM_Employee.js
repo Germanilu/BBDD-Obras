@@ -7,9 +7,17 @@ const chatPM_EmployeeSchema = new mongoose.Schema({
         ref: "Employee",
         type: mongoose.Schema.Types.ObjectId
     },
+    employeeName:{
+        type: String,
+        require:true
+    },
     projectManagerId:{
         ref: "Project_Manager",
         type: mongoose.Schema.Types.ObjectId
+    },
+    projectManagerName:{
+        type: String,
+        require:true
     },
     date:{
         type:String,

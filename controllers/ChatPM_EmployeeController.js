@@ -9,11 +9,12 @@ chatController.create = async (req,res) => {
     try {
         const requester = req.user_id
         const user2 = req.params.id
-
         const projectManager = await Project_Manager.find({_id: requester})
+        const employee = await Employee.find({_id: user2})
 
         if(projectManager.length == 0){
-            await Employee.find({_id:requester})
+            const employee = await Employee.find({_id:requester})
+            const projectManager = await Project_Manager.find({_id:user2})
             //Check if chat already exist
             const checkChat = await ChatPM_Employee.find({projectManagerId: user2, clientId : requester})
 
@@ -24,10 +25,13 @@ chatController.create = async (req,res) => {
                 })
             }
 
+
             //Creating new chat
             const newChat = {
                 EmployeeId: requester,
-                projectManagerId:user2
+                employeeName: employee[0].name + " " + employee[0].surname,
+                projectManagerId:user2,
+                projectManagerName:projectManager[0].name + " " + projectManager[0].surname
             }
             
             await ChatPM_Employee.create(newChat)
@@ -46,15 +50,19 @@ chatController.create = async (req,res) => {
         if(checkChat.length > 0){
             return res.status(500).json({
                 success: false,
-                message: "Ya existe una chat con este project manager"
+                message: "Ya existe una chat con este Trabajador"
             })
         }
+
 
         //Creating new chat
         const newChat = {
             EmployeeId: user2,
-            projectManagerId:requester
+            employeeName: employee[0].name + " " + employee[0].surname,
+            projectManagerId:requester,
+            projectManagerName:projectManager[0].name + " " + projectManager[0].surname
         }
+
         
         await ChatPM_Employee.create(newChat)
 

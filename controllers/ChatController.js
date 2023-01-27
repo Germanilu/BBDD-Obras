@@ -38,9 +38,9 @@ chatController.create = async (req,res) => {
         //Creating new chat
         const newChat = {
             clientId,
-            clientName:client[0].name,
+            clientName:client[0].name + " " + client[0].surname,
             projectManagerId,
-            projectManagerName: projectManager[0].name
+            projectManagerName: projectManager[0].name + " " + projectManager[0].surname
         }
         console.log(newChat)
         
