@@ -4,12 +4,20 @@ moment.locale("es")
 
 const chatSchema = new mongoose.Schema({
     clientId: {
+        ref: "Client",
+        type: mongoose.Schema.Types.ObjectId
+    },
+    clientName:{
         type: String,
-        require: true
+        required:true
     },
     projectManagerId:{
+        ref: "Project_Manager",
+        type: mongoose.Schema.Types.ObjectId
+    },
+    projectManagerName:{
         type: String,
-        require: true
+        required:true
     },
     date:{
         type:String,

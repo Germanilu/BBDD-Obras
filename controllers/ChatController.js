@@ -1,6 +1,7 @@
 const Client = require('../models/Client');
 const Chat = require('../models/Chat');
 const Project_Manager = require('../models/Project_Manager');
+const ChatPM_Employee = require('../models/ChatPM_Employee');
 
 const chatController = {};
 
@@ -11,7 +12,7 @@ chatController.create = async (req,res) => {
         const projectManagerId = req.params.id
         const projectManager = await Project_Manager.find({_id: projectManagerId})
         const client = await Client.find({_id: clientId})
-       
+        
         //To unable project manager to send message to client first
         if(!client[0]){
             return res.status(400).json({
@@ -37,8 +38,11 @@ chatController.create = async (req,res) => {
         //Creating new chat
         const newChat = {
             clientId,
-            projectManagerId
+            clientName:client[0].name,
+            projectManagerId,
+            projectManagerName: projectManager[0].name
         }
+        console.log(newChat)
         
         await Chat.create(newChat)
 
@@ -75,10 +79,17 @@ chatController.getAllChats = async (req,res) => {
         switch (roleName) {
             case "project_manager":
                 allChats = await Chat.find({ projectManagerId : userId })
+                allChatsE = await ChatPM_Employee.find({projectManagerId: userId})
                 break;
             case "client":
                 allChats = await Chat.find({ clientId : userId })
+                allChatsE = null
                 break;
+            case "employee":
+                allChats = await ChatPM_Employee.find({ EmployeeId : userId })
+                allChatsE = null
+                break;
+            
         }
         //If no chat return 
         if(allChats.length == 0){
@@ -87,11 +98,11 @@ chatController.getAllChats = async (req,res) => {
                 message: "No tienes ninguna chat abierta"
             })
         }
-    
+
         return res.status(200).json({
             success: true,
             message: "Aqui tus Chat's",
-            data: allChats
+            data: allChats,allChatsE
         })    
     
     } catch (error) {

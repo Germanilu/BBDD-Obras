@@ -81,50 +81,6 @@ chatController.create = async (req,res) => {
 }
 
 
-//Enable user to see his owns chat's
-chatController.getAllChats = async (req,res) => {
-    try {
-        const userId = req.user_id
-        //Request roleName from middleware
-        const roleName = req.roleName
-        //Switching rolename 
-        switch (roleName) {
-            case "project_manager":
-                allChats = await ChatPM_Employee.find({ projectManagerId : userId })
-                break;
-            case "employee":
-                allChats = await ChatPM_Employee.find({ EmployeeId : userId })
-                break;
-        }
-        //If no chat return 
-        if(allChats.length == 0){
-            return res.status(200).json({
-                success: false,
-                message: "No tienes ninguna chat abierta"
-            })
-        }
-    
-        return res.status(200).json({
-            success: true,
-            message: "Aqui tus Chat's",
-            data: allChats
-        })    
-    
-    } catch (error) {
-        if (error?.message.includes('Cast to ObjectId failed')) {
-            return res.status(404).json({
-                    success: true,
-                    messagge: "No se puede crear la chat"
-
-                });
-        }
-        return res.status(500).json({
-            success: false,
-            message: 'Unable to create chat ',
-            error: error.message
-        })
-    }
-}
 
 //Get chat by ID
 chatController.getChatById = async(req,res) => {
