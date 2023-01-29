@@ -286,8 +286,6 @@ authController.profile = async (req, res) => {
                 break;
         }
 
-        console.log(user)
-
         if (user) {
             return res.status(200).json({
                 success: true,
@@ -303,7 +301,42 @@ authController.profile = async (req, res) => {
             error: error?.message || RangeError
         })
     }
+}
 
+//Get all users on DB depending if requester is PM or CL
+ authController.getAllUsers = async (req,res) => {
+    try {
+
+        const roleName = req.roleName
+
+        switch (roleName) {
+            case "project_manager":
+                allUsers = await Client.find({})
+                break;
+            case "client":
+                allUsers = await Project_Manager.find({})
+                break;
+        }
+
+        if(!allUsers){
+            return res.status(500).json({
+                success:true,
+                message:"No hay usuarios"
+            })
+        }
+        
+        return res.status(200).json({
+            success:true,
+            message:"Aqui todos los usuarios!",
+            data:allUsers
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error al hacer login",
+            error: error?.message || RangeError
+        })
+    }
 }
 
 
