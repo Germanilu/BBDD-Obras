@@ -1,6 +1,6 @@
 const Chat = require('../models/Chat');
 const Message = require('../models/Message')
-
+const MessagePM_Employee = require('../models/MessagePM_Employee')
 const messageController = {}
 
 messageController.create = async(req,res) => {
@@ -169,7 +169,26 @@ messageController.delete = async(req,res) => {
         const messageId = req.params.id
         const userId = req.user_id
         //Find message by his ID
-        const message = await Message.findById(messageId)
+        
+        let message = await Message.findById(messageId)
+        if (!message) {
+          message = await MessagePM_Employee.findById(messageId);
+          
+          //Check if who request to eliminate the message is the same who post the message
+          if (message.userId !== userId) {
+            return res.status(400).json({
+              success: true,
+              message: "Este mensaje no es tuyo, no lo puedes eliminar!",
+            });
+          }
+
+          await MessagePM_Employee.findByIdAndDelete(message);
+
+          return res.status(200).json({
+            success: true,
+            message: "Mensaje eliminado",
+          });
+        }
 
         //Check if who request to eliminate the message is the same who post the message
         if(message.userId !== userId){

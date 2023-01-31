@@ -154,36 +154,4 @@ messageController.update = async(req,res) => {
 }
 
 
-//Deleting message in chat
-messageController.delete = async(req,res) => {
-    try {
-        const messageId = req.params.id
-        const userId = req.user_id
-        //Find message by his ID
-        const message = await MessagePM_Employee.findById(messageId)
-
-        //Check if who request to eliminate the message is the same who post the message
-        if(message.userId !== userId){
-            return res.status(400).json({
-                success: true,
-                message: "Este mensaje no es tuyo, no lo puedes eliminar!"
-            })
-        }
-
-        await MessagePM_Employee.findByIdAndDelete(message);
-
-        return res.status(200).json({
-            success: true,
-            message: "Mensaje eliminado"
-        })
-        
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Error, no se puede borrar el mensaje",
-            data: error?.message || error
-        })
-    }
-}
-
 module.exports = messageController;
