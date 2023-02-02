@@ -303,6 +303,45 @@ authController.profile = async (req, res) => {
     }
 }
 
+authController.editProfileData = async(req,res) => {
+    try {
+        const roleName = req.roleName
+        const userId = req.user_id
+        const {name,surname,mobile,address} = req.body
+
+        const updateUser = {
+            name,
+            surname,
+            mobile,
+            address,
+        };
+        
+        console.log(updateUser)
+        switch (roleName) {
+            case "project_manager":
+                await Project_Manager.findOneAndUpdate({_id: userId}, updateUser)
+                break;
+            case "client":
+                await Client.findOneAndUpdate({_id: userId}, updateUser)
+                break;
+            case "employee":
+                await Employee.findOneAndUpdate({_id: userId}, updateUser)
+                break;
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:"Datos de usuario actualizados"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error al hacer login",
+            error: error?.message || RangeError
+        })
+    }
+}
+
 //Get all users on DB depending if requester is PM or CL
  authController.getAllUsers = async (req,res) => {
     try {

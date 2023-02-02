@@ -171,6 +171,7 @@ messageController.delete = async(req,res) => {
         //Find message by his ID
         
         let message = await Message.findById(messageId)
+
         if (!message) {
           message = await MessagePM_Employee.findById(messageId);
           
