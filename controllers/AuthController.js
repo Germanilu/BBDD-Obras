@@ -316,23 +316,25 @@ authController.editProfileData = async(req,res) => {
             address,
         };
         
-        console.log(updateUser)
         switch (roleName) {
             case "project_manager":
-                await Project_Manager.findOneAndUpdate({_id: userId}, updateUser)
+                data = await Project_Manager.findOneAndUpdate({_id: userId}, updateUser)
                 break;
             case "client":
-                await Client.findOneAndUpdate({_id: userId}, updateUser)
+               data=  await Client.findOneAndUpdate({_id: userId}, updateUser)
                 break;
             case "employee":
-                await Employee.findOneAndUpdate({_id: userId}, updateUser)
-                break;
+                data = await Employee.findOneAndUpdate({_id: userId}, updateUser)
+                break;               
         }
 
-        return res.status(200).json({
-            success:true,
-            message:"Datos de usuario actualizados"
-        })
+        if(data){
+            return res.status(200).json({
+                success:true,
+                message:"Datos de usuario actualizados"
+            })
+        }
+
     } catch (error) {
         return res.status(500).json({
             success: false,
